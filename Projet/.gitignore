@@ -1,0 +1,5 @@
+*.o
+*~
+\#*\#
+save.txt
+appli

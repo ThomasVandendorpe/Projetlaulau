@@ -1,5 +1,8 @@
 #ifndef _ACTIONS_H_
 #define _ACTIONS_H_
+
+#include "board.h"
+
 void player(Board board, int num, char character);
 
 void undoRedo(char *x, Board board, int num, int *undoCol,

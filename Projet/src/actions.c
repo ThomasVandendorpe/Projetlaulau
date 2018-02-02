@@ -1,17 +1,19 @@
+#include <stdio.h>
 #include "actions.h"
+#include "board.h"
 
 void player(Board board, int num, char character)
 {
 	int i;
 	for(i=(board.height-1); i>=0;i--)
 	{
-		if(board[i][num-1]==VIDE)
+		if(board.tab[i][num-1]==VIDE)
 		{
-			board[i][num-1] = character;
+			board.tab[i][num-1] = character;
 			break;
 		}
 	}
-	print(board);
+	board_print(board);
 }
 
 void undoRedo(char *x, Board board, int num, int *undoCol,
@@ -31,16 +33,16 @@ void undoRedo(char *x, Board board, int num, int *undoCol,
 	}
 	if(num == 0){
 		ccounter +=1;
-		board[undoRow[(*q-1)]][undoCol[(*q-1)]] = VIDE;
-		print(board);
+		board.tab[undoRow[(*q-1)]][undoCol[(*q-1)]] = VIDE;
+		board_print(board);
 		*q-=1;
 		*z-=1;
 	}
 	else if(num == -3){
 		dcounter += 1;
 		if((dcounter <= ccounter)){
-			board[redoRow[*z]][redoCol[*z]] = *x;
-			print(board);
+			board.tab[redoRow[*z]][redoCol[*z]] = *x;
+			board_print(board);
 			*q+=1;
 			undoCol[*q] = redoCol[*z+1];
 			undoRow[*q] = redoRow[*z+1];
@@ -52,7 +54,7 @@ void undoRedo(char *x, Board board, int num, int *undoCol,
 	}
 	else if(num == -2){
 		printf("Game saved Successfully");
-		print(board);
+		board_print(board);
 	}
 	else{
 		*q+=1;
@@ -79,7 +81,7 @@ int numX(Board board){
 	int i, j, counter=0;
 	for(i=board.height-1;i>=0;i--){
 		for(j=board.width-1;j>=0;j--){
-			if(board[i][j] == 'X'){;
+			if(board.tab[i][j] == 'X'){;
 				counter+=1;
 			}
 		}
@@ -90,7 +92,7 @@ int numO(Board board){
 	int i, j, counter=0;
 	for(i=board.height-1;i>=0;i--){
 		for(j=board.width-1;j>=0;j--){
-			if(board[i][j] == 'O'){;
+			if(board.tab[i][j] == 'O'){;
 				counter+=1;
 			}
 		}
