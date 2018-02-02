@@ -2,7 +2,6 @@ EXEC=appli
 
 SRC=src
 HEADERS=Include
-OBJETS=obj
 
 CC=gcc
 CFLAGS=-Wall -Werror -I./$(HEADERS)
@@ -12,15 +11,14 @@ LDFLAGS=
 
 all: $(EXEC)
 
-$(EXEC): $(patsubst $(SRC)%.c,$(OBJETS)%.o,$(shell ls $(SRC)/*.c))
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+$(EXEC): $(patsubst $(SRC)/%.c,%.o,$(shell ls $(SRC)/*.c))
+	$(CC) -o $@ $^ $(LDFLAGS) 
 
-$(OBJETS)/%.o:$(SRC)/%.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
+%.o:$(SRC)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(EXEC) $(OBJETS)/*.o
-
+	rm *.o
 
 
 
