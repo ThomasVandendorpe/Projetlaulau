@@ -1,3 +1,5 @@
+#ifndef _TEST_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,7 +76,7 @@ int main(int argc,char* argv[])
 	  saveLoad(&num, board);
 	  num = checknum(num,board);
 	  if(checkCol(num,board)){
-	    while(board.tab[0][num-1]!=VIDE)
+	    while(num>0 && board.tab[0][num-1]!=VIDE)
 	      {
 		board_print(board);
 		printf("Invalid input. Do another move : ");
@@ -133,7 +135,7 @@ int main(int argc,char* argv[])
 	  saveLoad(&num, board);
 	  num = checknum(num,board);
 	  if(checkCol(num,board)){
-	    while(board.tab[0][num-1]!=VIDE)
+	    while(num>0 && board.tab[0][num-1]!=VIDE)
 	      {
 		board_print(board);
 		printf("Invalid input. Do another move : ");
@@ -217,7 +219,7 @@ int main(int argc,char* argv[])
 	  saveLoad(&num, board);
 	  num = checknum(num,board);
 	  if(checkCol(num,board)){
-	    while(board.tab[0][num-1]!=VIDE)
+	    while(num>0 && board.tab[0][num-1]!=VIDE)
 	      {
 		board_print(board);
 		printf("Invalid input. Do another move : ");
@@ -349,6 +351,7 @@ int main(int argc,char* argv[])
   return 0;
 }
 
+#endif
 
 
 

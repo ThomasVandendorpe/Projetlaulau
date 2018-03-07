@@ -33,7 +33,7 @@ void Easy(Board b, int *num)
 int checkEmpty1(Board b,int num,int numOfrow)
 {
   if(numOfrow==(b.height-1) && b.tab[numOfrow][num]=='\0'){return 1;}
-  else if(b.tab[numOfrow+1][num]!='\0' && b.tab[numOfrow][num]=='\0'){return 1;}
+  else if(b.tab[numOfrow+1][num]!='\0' && b.tab[numOfrow][num]=='\0'){return 1;}//TODO: ERREUR DE SEGEMENTATION CF.VALGRIND
   return 0;
 }
 int Medium(Board b, char character, int *num)

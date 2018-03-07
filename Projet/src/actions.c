@@ -7,7 +7,7 @@ void player(Board board, int num, char character)
 	int i;
 	for(i=(board.height-1); i>=0;i--)
 	{
-		if(board.tab[i][num-1]==VIDE)
+		if(num>0 && board.tab[i][num-1]==VIDE)
 		{
 			board.tab[i][num-1] = character;
 			break;
@@ -88,6 +88,7 @@ int numX(Board board){
 	}
 	return counter;
 }
+
 int numO(Board board){
 	int i, j, counter=0;
 	for(i=board.height-1;i>=0;i--){

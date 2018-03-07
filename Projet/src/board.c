@@ -110,7 +110,7 @@ int checkEmpty(Board board){
 int checkCol(int num, Board board){
   int i, counter=0;
   for(i=board.height-1;i>=0;i--){
-    if(board.tab[i][num-1] == '\0'){
+    if(num>0 && board.tab[i][num-1] == '\0'){
       counter = 0;
       break;
     }
@@ -148,6 +148,7 @@ void XMLformating(char* filename,int* w,int* h,int* hs)//TODO: déplacer dans un
       }
     }
   }
+  c4='0';
   while(fscanf(file,"%c", &c3)!=EOF){
     fscanf(file,"< / Configurations %c", &c4);
     if(c4=='>'){
@@ -159,16 +160,29 @@ void XMLformating(char* filename,int* w,int* h,int* hs)//TODO: déplacer dans un
   if(flag1==1 && flag2==1)
     {
       fseek(file,start,SEEK_SET);
+      width=0;
+      widthTag='0';
       while(fscanf(file,"%c", &c5)!=EOF){
 	fscanf(file,"< Width >%d < / Width %c", &width, &widthTag);
-	if( (widthTag=='>') && (width>=4) && ftell(file)<End ) {widthflag=1; break;}
+	if( (widthTag=='>') && (width>=4) && ftell(file)<End )
+	  {
+	    widthflag=1;
+	    break;
+	  }
       }
       fseek(file,start,SEEK_SET);
+      height=0;
+      heightTag='0';
       while(fscanf(file,"%c", &c6)!=EOF){
 	fscanf(file,"< Height >%d < / Height %c", &height, &heightTag);
-	if( (heightTag=='>') && (height>=4) && ftell(file)<End ) {heightflag=1; break;}
+	if( (heightTag=='>') && (height>=4) && ftell(file)<End ) {
+	  heightflag=1;
+	  break;
+	}
       }
       fseek(file,start,SEEK_SET);
+      highscoresTag='0';
+      highScores=0;
       while(fscanf(file,"%c", &c7)!=EOF){
 	fscanf(file,"< Highscores >%d < / Highscores %c", &highScores, &highscoresTag);
 	if( (highscoresTag=='>') && (highScores>=4) && ftell(file)<End ) {highscoresflag=1; break;}
