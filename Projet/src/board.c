@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "board.h"
+#include <assert.h>
+
 
 Board board_new(int width,int height,int highScores){
   Board b;
@@ -17,22 +19,28 @@ Board board_new(int width,int height,int highScores){
 	  b.tab[i][j]= VIDE;
 	}
     }
+  b.last = malloc(width*height*sizeof(char));
+  b.n_last = 0;
+  b.undoRedoIndex = 0;
   return b;
 }
 
-void board_free(Board b){
+void board_free(Board board){
   int i;
-  for(i=0; i<b.height; i++)
+  for(i=0; i<board.height; i++)
     {
-      free(b.tab[i]);
+      free(board.tab[i]);
     }
-  free(b.tab);
+  free(board.tab);
 }
 
 
 void board_print(Board board)
 {
   int i, j;
+  //printf("\033[31m");
+  char color[]="\033[34m";
+  printf("%s",color);
   for(i=0; i<board.height; i++)
     {
       printf("\n+");
@@ -44,7 +52,14 @@ void board_print(Board board)
       for(j=0; j<board.width; j++)
 	{
 	  if(board.tab[i][j]!=VIDE){
-	    printf(" %c |", board.tab[i][j]);
+	    printf("\033[0m");
+	    if(board.tab[i][j]==SYM_PLAYER_1)
+	      printf("\033[43m");
+	    else
+	      printf("\033[41m");
+	    printf(" %c ", board.tab[i][j]);
+	    printf("\033[0m");
+	    printf("%s|",color);
 	  }
 	  else{
 	    printf("   |");
@@ -61,8 +76,83 @@ void board_print(Board board)
     printf("   %d",i);
   }
   printf("\n\n\n");
+  printf("\033[0m");
 }
 
+/*ancienne fonction player*/
+int board_put(Board* board,int col,char symPlayer){
+  int i;
+  assert(col>0 && col<=board->width);
+  for(i=board->height-1;i>=0;i--)
+    {
+      if(board->tab[i][col-1]==VIDE)
+	{
+	  board->tab[i][col-1] = symPlayer;
+	  board->last[board->undoRedoIndex]=col-1;
+	  board->undoRedoIndex++;
+	  board->n_last = board->undoRedoIndex;
+	  return i;
+	}
+    }
+  return -1;
+}
+
+int board_colIsFull(Board board,int col){
+  assert(col>0 && col <= board.width);
+  return board.tab[0][col-1]!=VIDE;
+}
+
+int board_redo(Board* board,int n){
+  int i,j,k,res;
+  res=-1;
+  if(board->undoRedoIndex+n>board->n_last) return -1;
+  for(k=0;k<n;k++){
+  j = board->last[board->undoRedoIndex];
+  for(i=board->height-1;i>=0;i--)
+    {
+      if(board->tab[i][j]==VIDE)
+	{
+	  if(board->undoRedoIndex%2==1)
+	    board->tab[i][j]=SYM_PLAYER_2;
+	  else
+	    board->tab[i][j]=SYM_PLAYER_1;
+	  board->undoRedoIndex++;
+	  res=i;
+	  break;
+	}
+    }
+  }
+  return res;
+}
+
+int board_undo(Board* board,int n){
+  int i,j,k,res;
+  res=-1;
+  if(board->undoRedoIndex-n<0) return -1;
+  for(k=0;k<n;k++){
+    j = board->last[board->undoRedoIndex-1];
+    printf("UNDO col: %d\n",j);
+    for(i=0;i<board->height;i++){
+      if(board->tab[i][j]!=VIDE){
+	board->tab[i][j]=VIDE;
+	board->undoRedoIndex--;
+        res=i;
+	break;
+      }
+    }
+  }
+  return res;
+}
+
+
+int checknum(int num, Board board)
+{
+  if (num<-3 || num>board.width)
+    return 0;
+  return 1;
+}
+
+/*
 int checknum(int num, Board board)
 {
   while((num<-3) || (num>board.width))
@@ -72,7 +162,7 @@ int checknum(int num, Board board)
       scanf("%d", &num);
     }
   return num;
-}
+}*/
 int checkfull(Board board)
 {
   int i, j;
@@ -88,6 +178,30 @@ int checkfull(Board board)
 
     }
   return 0;
+}
+
+int numX(Board board){
+	int i, j, counter=0;
+	for(i=board.height-1;i>=0;i--){
+		for(j=board.width-1;j>=0;j--){
+			if(board.tab[i][j] == 'X'){;
+				counter+=1;
+			}
+		}
+	}
+	return counter;
+}
+
+int numO(Board board){
+	int i, j, counter=0;
+	for(i=board.height-1;i>=0;i--){
+		for(j=board.width-1;j>=0;j--){
+			if(board.tab[i][j] == 'O'){;
+				counter+=1;
+			}
+		}
+	}
+	return counter;
 }
 
 int rowNum(int num, Board board){
@@ -107,6 +221,7 @@ int checkEmpty(Board board){
   }
   return 1;
 }
+
 int checkCol(int num, Board board){
   int i, counter=0;
   for(i=board.height-1;i>=0;i--){

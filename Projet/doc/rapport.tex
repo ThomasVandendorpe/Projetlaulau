@@ -1,0 +1,133 @@
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{appendix}
+\usepackage{listings}
+\title{Rapport Méthodes et Outils pour la Conception Avancée}
+\author{Castel Antonin, Reboul Paul, Vandendorpe Thomas}
+\begin{document}
+\maketitle{}
+\section{Introduction}
+
+Ce rapport présente les modifications apportées au programme de puissance 4 au fil des séances. Nous nous sommes dans un premier temps familiarisé avec le code donné, et l'avons rendu plus modulaire, puis nous avons étudié des principes de tests, et enfin nous avons fini par utiliser des outils permettant de trouver des erreurs.
+
+\section{Modularité, maintenabilité, réutilisabilité}
+
+Les 3 premières séances avaient pour but de découvrir le code fournis, de corriger les erreurs les plus flagrantes, puis de séparer le code en plusieurs fichiers afin d'avoir un code plus modulaire. Nous avons également créé un git afin de faciliter le travail en groupe et de garder un historique des modifications effectuées.
+\subsection{Séance 1}
+
+Nous avons corrigé les premières erreurs détectées lors de la compilation avec les warning: variables déclarées mais non utilisées, fonction sans valeur de retour. Puis à l'aide de gdb nous avons repéré l'endroit où se trouvait une erreur de segmentation venant d'une mauvaise allocation de la mémoire. En continuant à utiliser l'application, nous avons observé et corrigé d'autres erreurs notamment lors de l'ouverture de fichier ou de l'affichage.
+
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item fonction XMLformating: Suppression variables inutilisées. Passage en argument des noms de fichiers. Gestion des erreurs en cas de fichier inexistant.
+\item fonction Medium: Ajout valeur de retour.
+\item fonction Main: Allocation du board.
+\item fonction Print: Modification de l'affichage. Ajout de define pour les éléments des cases du tableau(case vide).
+\item fonction saveLoad: gestion fichier inexistant.
+\item fonction highScore: gestion fichier inexistant.
+\end{itemize}
+
+\subsection{Séance 2 - Séance 3}
+
+Lors de ces séances nous avons séparé notre programme en plusieurs fichiers. Nous avons ainsi plusieurs .c dans un dossier src/ et plusieurs .h dans un dossier include/. L'utilisation de variables globales par le fichier de base pose problème pour la séparation en plusieurs fichiers, deux choix sont possibles: utiliser des variables extern ou créer un structure (qu'on passera donc en arguments aux fonction en ayant besoin). Nous avons choisi cette seconde option qui bien que nécessitant de modifier beaucoup le code nous semble plus facile à être utilisé par la suite. Nous avons profité de ce découpage pour essayer de comprendre ce que sont censées faire certaines fonctions.\\
+La découpe du code est faites en 5 fichiers .c (et leur .h):
+\begin{itemize}
+\item appli.c : le main
+\item board.c/board.h : les fonctions manipulant la structure board(le plateau de puissance 4)
+\item action.c/action.h : les actions(les règles) du jeu
+\item ia.c/ia.h : les IAs
+\item score.c/score.h: les informations de scores
+\end{itemize}
+Ce découpage est amené à changer au fure et à mesure de notre compréhension globale du programme.
+
+Une fois le programme découpé, nous avons créer un Makefile permettant la compilation de fichiers séparés. Nous avons pris soin de faire un Makefile qui soit générique et qui permet de facilement modifier les options de compilations.
+
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item Structuration du code en plusieurs fichiers
+\item Création du Makefile
+\item Spécification de quelques fonctions
+\end{itemize}
+
+
+\section{Qualité des tests, analyse de couverture}
+\subsection{Séance 4}
+
+Cette séance était dédiée aux tests. Dans un premier temps nous nous sommes occupés de la mesure de la couverture de tests du programme grâce à l'outil gcov. Cet outil nécessite de compiler avec des flags spécifiques, nous avons donc modifié notre Makefile en conséquence. Nous avons ensuite exécuté des tests et avons pu observer la couverture grâce à gcov. Afin d'avoir un aperçu visuel de la couverture nous avons utilisé lcov qui génère des rapports de couverture en HTML. Notons que la couverture ne donne d'information que sur les parties du programme qui ont été exploré, et pas sur la qualité des tests.
+C'est pourquoi nous avons ensuite travaillé sur l'automatisation de tests à l'aide de CuTests. Ces tests unitaires sont ajouté à notre code dans un fichier .c. Cependant nous avons rencontré plusieurs problèmes:
+\begin{enumerate}
+\item L'exécution des tests se font à partir d'une autre fonction main, avec deux main notre Makefile ne fonctionnait plus!
+\item Il restait encore des fonctions dont on ignorait ce qu'elles faisaient, et qu'on ne pouvait donc pas tester.
+\item Certaine fonction ne se prêtaient pas aux tests unitaires (pas de valeur de retour ou valeurs de retour mal choisies)
+\item Impossibilité de tester la fonction main du puissance 4(qui était assez conséquente en taille)
+\end{enumerate}
+
+Nous avons donc répondu à ces problèmes en:
+\begin{enumerate}
+\item Améliorant encore notre Makefile pour qu'il fonctionne malgrè les deux fonctions main.
+\item Comprenant mieux les fonctions indéterminés, quitte à les récoder lorsqu'elles sont trop compliquées(les fonctions du sytème d'undo/redo par exemple)
+\item Mettant des valeurs de retour plus adaptés lorsque c'est possible
+\item Découpant la fonction main en plusieurs petites fonctions
+\end{enumerate}
+
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item Modification du Makefile pour prendre en compte la couverture et plusieurs main
+\item Tests pour observer la couverture
+\item Tests unitaires
+\item Découpage du main
+\item Réécriture et redéfinition de certaines fonctions
+\end{itemize}
+
+\section{Détection de défauts et erreurs}
+\subsection{Séance 5 - Séance 6}
+
+Une première partie consistait à utiliser Klee, qui est un outils simulant des exécutions du programme. Suite au difficulté d'adapter notre Makefile et notre code pour Klee, nous avons effectué cette partie sur le code initial du puissance 4 (comme le prévoyait l'énoncé). L'utilisation de Klee a nécessité de remplacer tous les scanfs par des fonctions de klee et à masquer les printf. Klee a pu détecter 3,4 erreurs d'accès mémoire invalides.
+La seconde partie consistait à utiliser valgrind sur notre programme. Nous avons encore trouver des erreurs d'accès mémoires, venant principalement des accès au tableau représentant le puissance 4.
+
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item Correction de bugs
+\end{itemize}
+
+\newpage
+
+\appendix
+\chapter{Makefile}
+  \begin{lstlisting}
+    EXEC=appli AllTests
+    appli:
+    AllTests:
+
+    COUVERTURE=y
+
+    SRC=src
+    HEADERS=Include
+
+    CC=gcc
+    CFLAGS= -I./$(HEADERS) -g
+    LDFLAGS=
+
+    #############################################################
+    ifeq ($(COUVERTURE),y)
+       CFLAGS+= -fprofile-arcs -ftest-coverage 
+       LDFLAGS+= -fprofile-arcs -ftest-coverage
+    endif
+    #############################################################
+
+    all: $(EXEC)
+
+    %.o:$(SRC)/%.c
+          $(CC) $(CFLAGS) -c $< -o $@
+
+    %: %.o $(patsubst $(SRC)/%.c,%.o,$(shell grep -L "int main" $(SRC)/*.c))
+          $(CC) -o $@ $^ $(LDFLAGS)
+
+    clean:
+          rm *.o *.gcda *.gcno $(EXEC)
+  \end{lstlisting}
+
+
+\end{document}

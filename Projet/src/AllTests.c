@@ -1,5 +1,3 @@
-#ifdef _TEST_
-
 #include "CuTest.h"
 #include <stdio.h>
 
@@ -21,4 +19,3 @@ int main(void) {
     RunAllTests();
 }
 
-#endif

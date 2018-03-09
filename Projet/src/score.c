@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "score.h"
 #include "board.h"
 
@@ -56,4 +57,14 @@ int diagonal1(Board board, char character){
         }
     }
   return score1;
+}
+
+void print_scores(int scores[2]){
+  printf("\n***************************************************");
+  printf("\n***************************************************");
+  printf("\n**                      **                       **");
+  printf("\n** player1 score : %d    **   player2 score  : %d  **", scores[0], scores[1]);
+  printf("\n**                      **                       **");
+  printf("\n***************************************************");
+  printf("\n***************************************************");
 }

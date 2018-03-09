@@ -1,6 +1,81 @@
 #include <stdio.h>
 #include "actions.h"
 #include "board.h"
+#include "score.h"
+#include "ia.h"
+#include "assert.h"
+
+int play_ia(Board* board,char sym,int difficulty){
+  switch(difficulty)
+    {
+    case 1:{
+      int res=-1;
+      res = Easy(*board);
+      assert(res!=-1);
+      board_put(board,res,sym);
+      break;
+    }
+    case 2: {
+      int res=-1;
+      res = Medium(*board,SYM_PLAYER_1);
+      if(res==-1) res = Easy(*board);
+      assert(res!=-1);
+      board_put(board,res,sym);
+      break;
+    }
+    case 3:{
+      int res=-1;
+      res = Hard(*board);
+      assert(res!=-1);
+      board_put(board,res,sym);
+      break;
+    }
+    }
+  return 0;
+}
+
+int play_player(Board* board,int currentPlayer,char symPlayer,int mode){
+  int num;
+  board_print(*board);
+  printf("\nif you want to undo, press 0\n");
+  printf("if you want to redo, press -3, to load, press -1, to save, press -2\n");
+  printf("\nplayer %d enter number of the column:",currentPlayer);
+  num=-100;
+  scanf("%d",&num);
+  while(!checknum(num,*board)){
+    getc(stdin);
+    board_print(*board);
+    printf("\nPlease enter a number between 1 and %d :", board->width);
+    scanf("%d",&num);
+  }
+  switch(num){
+  case -1:
+  case -2:
+    saveLoad(&num,*board);
+    break;
+  case -3:
+    board_redo(board,mode);
+    break;
+  case 0:
+    if(board_undo(board,mode)==-1)
+      printf("\ncannot undo! play again");
+    break;
+  default:
+    {
+      if (!board_colIsFull(*board,num)){
+	board_put(board,num,symPlayer);
+	return 1;
+      }
+      else{
+	printf("Invalid input. Do another move : ");
+      }
+	  
+      break;
+    }
+  }
+  return 0;
+}
+
 
 void player(Board board, int num, char character)
 {
@@ -77,26 +152,3 @@ void undoRedoLimit(int num, int *undoCounter, int *redoCounter){
 	}
 }
 
-int numX(Board board){
-	int i, j, counter=0;
-	for(i=board.height-1;i>=0;i--){
-		for(j=board.width-1;j>=0;j--){
-			if(board.tab[i][j] == 'X'){;
-				counter+=1;
-			}
-		}
-	}
-	return counter;
-}
-
-int numO(Board board){
-	int i, j, counter=0;
-	for(i=board.height-1;i>=0;i--){
-		for(j=board.width-1;j>=0;j--){
-			if(board.tab[i][j] == 'O'){;
-				counter+=1;
-			}
-		}
-	}
-	return counter;
-}
