@@ -32,7 +32,7 @@ Affiche un board
 void board_print(Board board);
 
 /*
-Renvoie 1 si le board est plein, 0 sinon
+Renvoie 0 si le board est plein, 1 sinon
  */
 int checkfull(Board board);
 
@@ -52,11 +52,17 @@ Renvoie 1 si la colonne num du board est pleine, sinon 0
 int checkCol(int num, Board board);
 
 /*
-Insere un symbol dans le board à la colonne col (numéroté de 1 à board.width)
-Met à jour le système undo/redo
-Renvoie le numero de la ligne (de 0 à board.height) si succès, sinon -1
+Renvoie le symbole de joueur courant
  */
-int board_put(Board* board,int col,char symPlayer);
+char board_currentPlayerSymbole(Board b);
+
+/*
+Insere le symbol du joueur courant dans le board à la colonne col (numéroté de 1 à board.width)
+Met à jour le système undo/redo
+Renvoie le numero de la ligne (de 0 à board.height-1) si succès, sinon -1
+ */
+int board_put(Board* board,int col);
+
 
 /*renvoie 1 si le colonne col est pleine, sinon 0*/
 int board_colIsFull(Board board,int col);
@@ -72,6 +78,16 @@ Effectue n redo
 Renvoie la dernière colonne redo si réussi, sinon -1
  */
 int board_redo(Board* board,int n);
+
+/*
+Renvoie la dernière colonne jouée num de 0 à board.width-1
+ */
+int board_lastPlayCol(Board board);
+
+/*
+Renvoie la dernière ligne jouée num de 0 à board.height-1
+ */
+int board_lastPlayRow(Board board);
 
 
 int checknum(int num, Board board);

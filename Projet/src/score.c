@@ -3,58 +3,65 @@
 #include "board.h"
 
 int horizontalScore(Board board, char character){
-  int u, v;
+  int u, v, j;
   int score1=0;
-  for(u=0;u<board.height;u++)
-    {
-      for(v=0;v<(board.width-3);v++)
-        {
-	  if(board.tab[u][v] == character && board.tab[u][v+1] == character && board.tab[u][v+2] == character && board.tab[u][v+3] == character){
-	    score1++;
-	  }
-        }
+  v = board_lastPlayCol(board);
+  // for(u=0;u<board.height && board.tab[u][v]==VIDE ;u++);
+  u=board_lastPlayRow(board);
+  for(j=v-3;j<=v;j++){
+    if(j>=0 && j+3<board.width && board.tab[u][j] == character && board.tab[u][j+1] == character && board.tab[u][j+2] == character && board.tab[u][j+3] == character){
+      score1++;
     }
+  }
   return score1;
 }
 int verticalScore(Board board, char character){
-  int u, v;
+  int u, v, i;
   int score1=0;
-  for(v=0;v<board.width;v++)
+  v = board_lastPlayCol(board);
+  //for(u=0;u<board.height && board.tab[u][v]==VIDE ;u++);
+  u=board_lastPlayRow(board);
+  for(i=u-3;i<=u;i++)
     {
-      for(u=0;u<(board.height-3);u++)
-        {
-	  if(board.tab[u][v] == character && board.tab[u+1][v] == character && board.tab[u+2][v] == character && board.tab[u+3][v] == character){
-	    score1++;
-	  }
-        }
+      if(i>=0 && i+3<board.height && board.tab[i][v] == character && board.tab[i+1][v] == character && board.tab[i+2][v] == character && board.tab[i+3][v] == character){
+	score1++;
+      }
     }
   return score1;
 }
+
+/*
+\v
+ */
 int diagonal(Board board, char character){
-  int u, v;
+  int u, v, a;
   int score1=0;
-  for(u=(board.height-1);u>=3;u--)
+  v = board_lastPlayCol(board);
+  //for(u=0;u<board.height && board.tab[u][v]==VIDE ;u++);
+  u=board_lastPlayRow(board);
+  for(a=-3;a<=0;a++)
     {
-      for(v=0;v<(board.width-3);v++)
-        {
-	  if(board.tab[u][v] == character && board.tab[u-1][v+1] == character && board.tab[u-2][v+2] == character && board.tab[u-3][v+3] == character){
-	    score1++;
-	  }
-        }
+	if(v+a>=0 && v+a+3<board.width && u+a>=0 && u+a+3<board.height && board.tab[u+a][v+a] == character && board.tab[u+a+1][v+a+1] == character && board.tab[u+a+2][v+a+2] == character && board.tab[u+a+3][v+a+3] == character){
+	  score1++;
+	}
     }
   return score1;
 }
+
+/*
+/^
+ */
 int diagonal1(Board board, char character){
-  int u, v;
+  int u, v, a;
   int score1=0;
-  for(u=(board.height-1);u>=3;u--)
+  v = board_lastPlayCol(board);
+  //  for(u=0;u<board.height && board.tab[u][v]==VIDE ;u++);
+  u=board_lastPlayRow(board);
+  for(a=-3;a<=0;a++)
     {
-      for(v=(board.width-1);v>=3;v--)
-        {
-	  if(board.tab[u][v] == character && board.tab[u-1][v-1] == character && board.tab[u-2][v-2] == character && board.tab[u-3][v-3] == character){
-	    score1++;
-	  }
-        }
+	if(v+a>=0 && v+a+3<board.width && u-a<board.height && u-a-3>=0 && board.tab[u-a][v+a] == character && board.tab[u-a-1][v+a+1] == character && board.tab[u-a-2][v+a+2] == character && board.tab[u-a-3][v+a+3] == character){
+	  score1++;
+	}
     }
   return score1;
 }

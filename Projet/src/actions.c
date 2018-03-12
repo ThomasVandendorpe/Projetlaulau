@@ -5,14 +5,14 @@
 #include "ia.h"
 #include "assert.h"
 
-int play_ia(Board* board,char sym,int difficulty){
+int play_ia(Board* board,int difficulty){
   switch(difficulty)
     {
     case 1:{
       int res=-1;
       res = Easy(*board);
       assert(res!=-1);
-      board_put(board,res,sym);
+      board_put(board,res);
       break;
     }
     case 2: {
@@ -20,21 +20,21 @@ int play_ia(Board* board,char sym,int difficulty){
       res = Medium(*board,SYM_PLAYER_1);
       if(res==-1) res = Easy(*board);
       assert(res!=-1);
-      board_put(board,res,sym);
+      board_put(board,res);
       break;
     }
     case 3:{
       int res=-1;
       res = Hard(*board);
       assert(res!=-1);
-      board_put(board,res,sym);
+      board_put(board,res);
       break;
     }
     }
   return 0;
 }
 
-int play_player(Board* board,int currentPlayer,char symPlayer,int mode){
+int play_player(Board* board,int currentPlayer,int mode){
   int num;
   board_print(*board);
   printf("\nif you want to undo, press 0\n");
@@ -63,7 +63,7 @@ int play_player(Board* board,int currentPlayer,char symPlayer,int mode){
   default:
     {
       if (!board_colIsFull(*board,num)){
-	board_put(board,num,symPlayer);
+	board_put(board,num);
 	return 1;
       }
       else{

@@ -1,8 +1,7 @@
 \documentclass{article}
 \usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{appendix}
 \usepackage{listings}
 \title{Rapport Méthodes et Outils pour la Conception Avancée}
 \author{Castel Antonin, Reboul Paul, Vandendorpe Thomas}
@@ -92,41 +91,114 @@ La seconde partie consistait à utiliser valgrind sur notre programme. Nous avon
 \item Correction de bugs
 \end{itemize}
 
+\section{Analyse de Performances}
+\subsection{Séance 7}
+Lors de cette séance, nous avons utilisé gprof pour analyser notre programme, et ainsi déterminer quelles fonctions étaient les plus coûteuses. Cet outil nécessite que notre programme tourne un certain temps afin d'avoir des résultats exploitables. En utilisant une trop petite grille comme configuration pour notre puissance 4, on ne peut rien en tirer. Nous avons donc réalisé le profiling avec pour un puissance 4 de hauteur 100 et de largeur 100. De plus, nous avons généré des entrées à l'aide d'un script afin de ne pas avoir à jouer de partie ``à la main''. Voici un aperçu du résultat obtenu:
+
+\begin{scriptsize}
+\begin{lstlisting}
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+%   cumulative   self              self     total           
+time   seconds   seconds    calls  us/call  us/call  name    
+56.46      9.76     9.76     9907   985.34   985.34  board_print
+11.97     11.83     2.07    10000   207.04   207.04  diagonal
+11.16     13.76     1.93    10000   193.03   193.03  horizontalScore
+10.47     15.57     1.81    10000   181.03   181.03  verticalScore
+ 9.83     17.27     1.70    10000   170.03   170.03  diagonal1
+ 0.06     17.28     0.01    14906     0.67     0.67  checkfull
+ 0.06     17.29     0.01                             main
+ 0.00     17.29     0.00    24906     0.00     0.00  board_currentPlayerSymbole
+ 0.00     17.29     0.00    10000     0.00     0.00  board_put
+ 0.00     17.29     0.00     9906     0.00     0.00  board_colIsFull
+ 0.00     17.29     0.00     9906     0.00     0.00  checknum
+                         ...
+\end{lstlisting}
+\end{scriptsize}
+
+On voit que les fonctions couûteuses sont la fonction d'affichage, et les fonctions de calcul du score. On pourra difficilement optimiser la fonction d'affichage qui nécessitera toujours de parcourir le tableau. Par contre, les fonctions de calculs des scores peuvent être facilement améliorées. Au lieux de parcourir tout le tableau du puissance 4 pour recalculer tous les scores, on peut simplement mettre à jour les scores en prenant en compte seulement les changements affectés par le coup joué précédent, on fait ainsi moins de calculs, mais on stocke plus de chose en mémoire.
+
+Nouveau profiling avec les modifications:
+
+\begin{scriptsize}
+\begin{lstlisting}
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 99.37      6.10     6.10     9907   615.83   615.83  board_print
+  0.16      6.11     0.01    40000     0.25     0.25  board_lastPlayRow
+  0.16      6.12     0.01    14906     0.67     0.67  checkfull
+  0.16      6.13     0.01    10000     1.00     1.25  diagonal1
+  0.16      6.14     0.01    10000     1.00     1.25  horizontalScore
+  0.00      6.14     0.00    80000     0.00     0.00  board_lastPlayCol
+  0.00      6.14     0.00    24906     0.00     0.00  board_currentPlayerSymbole
+  0.00      6.14     0.00    10000     0.00     0.00  board_put
+  0.00      6.14     0.00    10000     0.00     0.25  diagonal
+  0.00      6.14     0.00    10000     0.00     0.25  verticalScore
+  0.00      6.14     0.00     9906     0.00     0.00  board_colIsFull
+  0.00      6.14     0.00     9906     0.00     0.00  checknum
+                         ...
+\end{lstlisting}
+\end{scriptsize}
+
+Nous avons donc grandement amélioré les perfomances du programme, qui passe mainenant presque tout son temp à l'affichage. A noter que notre solution n'est pas du tout la plus optimale, mais les changements on été relativement simple et rapide à faire, ce qui est un bon compromis entre le temps passé à recoder les fonctions et le gain de perfomance.
+
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item Mise à jour Makefile pour profiling
+\item Profiling
+\item Ajout de commentaires pour doxygen
+\end{itemize}
+
 \newpage
 
 \appendix
-\chapter{Makefile}
+%\chapter{Makefile}
   \begin{lstlisting}
-    EXEC=appli AllTests
-    appli:
-    AllTests:
+EXEC=appli AllTests
+appli:
+AllTests:
 
-    COUVERTURE=y
+COUVERTURE=y
+PROFILING=y
 
-    SRC=src
-    HEADERS=Include
+SRC=src
+HEADERS=Include
 
-    CC=gcc
-    CFLAGS= -I./$(HEADERS) -g
-    LDFLAGS=
+CC=gcc
+CFLAGS= -I./$(HEADERS) -g
+LDFLAGS=
 
-    #############################################################
-    ifeq ($(COUVERTURE),y)
-       CFLAGS+= -fprofile-arcs -ftest-coverage 
-       LDFLAGS+= -fprofile-arcs -ftest-coverage
-    endif
-    #############################################################
+#############################################################
+ifeq ($(COUVERTURE),y)
+	CFLAGS+= -fprofile-arcs -ftest-coverage 
+	LDFLAGS+= -fprofile-arcs -ftest-coverage
+endif
+ifeq ($(PROFILING),y)
+	CFLAGS+= -pg
+	LDFLAGS+= -pg
+endif
+#############################################################
 
-    all: $(EXEC)
+all: $(EXEC)
 
-    %.o:$(SRC)/%.c
-          $(CC) $(CFLAGS) -c $< -o $@
+%.o:$(SRC)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-    %: %.o $(patsubst $(SRC)/%.c,%.o,$(shell grep -L "int main" $(SRC)/*.c))
-          $(CC) -o $@ $^ $(LDFLAGS)
+%: %.o $(patsubst $(SRC)/%.c,%.o,$(shell grep -L "int main" $(SRC)/*.c))
+	$(CC) -o $@ $^ $(LDFLAGS)
 
-    clean:
-          rm *.o *.gcda *.gcno $(EXEC)
+profiling: appli
+	./appli $(args)
+	gprof ./appli > profiling.txt
+
+clean:
+	rm *.o *.gcda *.gcno $(EXEC)
+
+
   \end{lstlisting}
 
 

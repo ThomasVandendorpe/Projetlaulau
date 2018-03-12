@@ -79,15 +79,20 @@ void board_print(Board board)
   printf("\033[0m");
 }
 
-/*ancienne fonction player*/
-int board_put(Board* board,int col,char symPlayer){
+char board_currentPlayerSymbole(Board b){
+  if((b.undoRedoIndex&1)==0)
+    return SYM_PLAYER_1;
+  return SYM_PLAYER_2;
+}
+
+int board_put(Board* board,int col){
   int i;
   assert(col>0 && col<=board->width);
   for(i=board->height-1;i>=0;i--)
     {
       if(board->tab[i][col-1]==VIDE)
 	{
-	  board->tab[i][col-1] = symPlayer;
+	  board->tab[i][col-1] = board_currentPlayerSymbole(*board);
 	  board->last[board->undoRedoIndex]=col-1;
 	  board->undoRedoIndex++;
 	  board->n_last = board->undoRedoIndex;
@@ -102,25 +107,52 @@ int board_colIsFull(Board board,int col){
   return board.tab[0][col-1]!=VIDE;
 }
 
+int board_lastPlayCol(Board board){
+  return board.last[board.undoRedoIndex-1];
+}
+
+int board_lastPlayRow(Board board){
+  int i,j,n;
+  int v;
+  i=0;
+  j=board.height-1;
+  v = board_lastPlayCol(board);
+  n = (i+j)/2;
+  while(i<j){
+    if(board.tab[n][v]!=VIDE){
+      if(n==0 || board.tab[n-1][v]==VIDE) return n;
+      else {
+	j=n-1;
+	n=(i+j)/2;
+      }
+    }
+    else{
+      i=n+1;
+      n=(i+j)/2;
+    }
+  }
+  return i;
+}
+
 int board_redo(Board* board,int n){
   int i,j,k,res;
   res=-1;
   if(board->undoRedoIndex+n>board->n_last) return -1;
   for(k=0;k<n;k++){
-  j = board->last[board->undoRedoIndex];
-  for(i=board->height-1;i>=0;i--)
-    {
-      if(board->tab[i][j]==VIDE)
-	{
-	  if(board->undoRedoIndex%2==1)
-	    board->tab[i][j]=SYM_PLAYER_2;
-	  else
-	    board->tab[i][j]=SYM_PLAYER_1;
-	  board->undoRedoIndex++;
-	  res=i;
-	  break;
-	}
-    }
+    j = board->last[board->undoRedoIndex];
+    for(i=board->height-1;i>=0;i--)
+      {
+	if(board->tab[i][j]==VIDE)
+	  {
+	    if(board->undoRedoIndex%2==1)
+	      board->tab[i][j]=SYM_PLAYER_2;
+	    else
+	      board->tab[i][j]=SYM_PLAYER_1;
+	    board->undoRedoIndex++;
+	    res=i;
+	    break;
+	  }
+      }
   }
   return res;
 }
@@ -131,7 +163,6 @@ int board_undo(Board* board,int n){
   if(board->undoRedoIndex-n<0) return -1;
   for(k=0;k<n;k++){
     j = board->last[board->undoRedoIndex-1];
-    printf("UNDO col: %d\n",j);
     for(i=0;i<board->height;i++){
       if(board->tab[i][j]!=VIDE){
 	board->tab[i][j]=VIDE;

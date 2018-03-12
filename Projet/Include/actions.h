@@ -20,9 +20,9 @@ void undoRedoLimit(int num, int *undoCounter, int *redoCounter);
 /*
 retourne 1 si player a jouer un coup dans le board, 0 sinon
  */
-int play_player(Board* board,int currentPlayer,char symPlayer,int mode);
+int play_player(Board* board,int currentPlayer,int mode);
 
-int play_ia(Board* board,char sym,int difficulty);
+int play_ia(Board* board,int difficulty);
 
 
 #endif

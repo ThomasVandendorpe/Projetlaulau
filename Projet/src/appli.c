@@ -38,15 +38,14 @@ int main(int argc,char* argv[])
       char symPlayer;
       do{
 	currentPlayer=board.undoRedoIndex%2+1;
-	if (currentPlayer==1) symPlayer=SYM_PLAYER_1;
-	else symPlayer=SYM_PLAYER_2;
-  	if(play_player(&board,currentPlayer,symPlayer,1)){
-	  scores[currentPlayer-1]=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	symPlayer=board_currentPlayerSymbole(board);
+  	if(play_player(&board,currentPlayer,1)){
+	  scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
 	  print_scores(scores);	  
 	}
       }while(checkfull(board));
       board_print(board);
-      print_scores(scores);	  
+      print_scores(scores);
       if(scores[1]>scores[0]){
 	//high=scores[1];
 	printf("\nPLAYER 2 WINS");
@@ -79,17 +78,16 @@ int main(int argc,char* argv[])
 	char symPlayer;
 	do{
 	  currentPlayer=board.undoRedoIndex%2+1;
+	  symPlayer = board_currentPlayerSymbole(board);
 	  if (currentPlayer==1) {
-	    symPlayer=SYM_PLAYER_1;
-	    if(play_player(&board,currentPlayer,symPlayer,2)){
-	      scores[currentPlayer-1]=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	    if(play_player(&board,currentPlayer,2)){
+	      scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
 	      print_scores(scores);	  
 	    }
 	  }
 	  else{
-	    symPlayer=SYM_PLAYER_2;
-	    play_ia(&board,symPlayer,choose);
-	    scores[currentPlayer-1]=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	    play_ia(&board,choose);
+	    scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
 	  }
 	}while(checkfull(board));
 	board_print(board);

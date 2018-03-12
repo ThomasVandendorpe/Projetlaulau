@@ -3,7 +3,7 @@
 #Ce script met à jour la couverture du programme affichée grâce à lcov
 
 #Executable
-EXEC=appli
+EXEC=AllTests
 
 #Chemin de lcov
 LCOVPATH=~/Documents/s6/CA/lcov-1.13/bin
