@@ -9,6 +9,8 @@
 
 /**
 *\brief    compte les points horizontaux
+*\param    board la table de jeu
+*\param    character le symbol du joueur
 *\return   le score
 */
 int horizontalScore(Board board, char character){
@@ -28,6 +30,8 @@ int horizontalScore(Board board, char character){
 
 /**
 *\brief    compte les points verticaux
+*\param    board la table de jeu
+*\param    character le symbol du joueur
 *\return   le score
 */
 int verticalScore(Board board, char character){
@@ -46,11 +50,11 @@ int verticalScore(Board board, char character){
   return score1;
 }
 
-/*
-\v
- */
+
 /**
 *\brief    compte les points diagonaux (haut gauche vers bas droite)
+*\param    board la table de jeu
+*\param    character le symbol du joueur
 *\return   le score
 */
 int diagonal(Board board, char character){
@@ -71,6 +75,8 @@ int diagonal(Board board, char character){
 
 /**
 *\brief    compte les points diagonaux (bas gauche vers haut droite)
+*\param    board la table de jeu
+*\param    character le symbol du joueur
 *\return   le score
 */
 int diagonal1(Board board, char character){
@@ -92,6 +98,7 @@ int diagonal1(Board board, char character){
 
 /**
  *\brief    Affiche les scores
+ *\param    scores[] les scores des joueurs
  */
 void print_scores(int scores[2]){
   printf("\n***************************************************");

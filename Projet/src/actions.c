@@ -6,14 +6,13 @@
 #include "assert.h"
 
 /**
-* \file    action.c
+* \file    actions.c
 * \brief   Gestion du mode de jeu : JcJ ou JvIA
 */
 
 /**
  * \brief      L'IA joue un jeton celon la difficultée
  * \param      board une table de jeu
- * \param      sym symbole du jeton
  * \param      difficulty difficulté de l'IA
  * \return     0
  */
@@ -47,11 +46,10 @@ int play_ia(Board* board,int difficulty){
 }
 
 /**
- * \brief      Le joueur joue un jeton joue un jeton
+ * \brief      Le joueur fait une action
  * \detail     Propose au joueur de sauvegarder / charger / retourner en arriere / ou jouer un jeton
- * \param      currentPlayer joueur courant
  * \param      board une table de jeu
- * \param      sym symbole du jeton
+ * \param      currentPlayer joueur courant
  * \param      mode undo redo
  * \return     return 1 si le joueur a jouer (+ joue le coup dans le board)
                0 s'il veut undo
@@ -86,20 +84,5 @@ int play_player(Board* board,int currentPlayer,int mode){
   }
   return -4;
   
-}
-
-
-void player(Board board, int num, char character)
-{
-	int i;
-	for(i=(board.height-1); i>=0;i--)
-	{
-		if(num>0 && board.tab[i][num-1]==VIDE)
-		{
-			board.tab[i][num-1] = character;
-			break;
-		}
-	}
-	board_print(board);
 }
 

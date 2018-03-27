@@ -42,6 +42,9 @@ profiling: appli
 fuzzing: appli
 	afl-fuzz -i afl_in/ -o afl_out/ ./appli  @@ < testconf1.txt
 
+doxygen: doxygen Doxyfile
+	firefox documentation/html/index.html
+
 clean:
 	rm *.o *.gcda *.gcno $(EXEC)
 

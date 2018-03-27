@@ -7,6 +7,19 @@
 #include "score.h"
 #include "ia.h"
 
+
+/**
+* \file     appli.c
+* \brief    Exécution du puissance 4.
+*/
+
+
+/**
+ * \brief      exécution d'une partie
+ * \param      argc argument qui est le nom du fichier XML contenant les informations de la partie
+ * \return     0
+ */
+
 int main(int argc,char* argv[])
 {
   int width,height,highScores;
