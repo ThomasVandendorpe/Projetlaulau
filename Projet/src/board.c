@@ -192,7 +192,7 @@ int board_redo(Board* board,int n){
       {
 	if(board->tab[i][j]==VIDE)
 	  {
-	    if(board->undoRedoIndex%2==1)
+	    if(board->undoRedoIndex&1==1)
 	      board->tab[i][j]=SYM_PLAYER_2;
 	    else
 	      board->tab[i][j]=SYM_PLAYER_1;

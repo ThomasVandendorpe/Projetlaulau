@@ -2,8 +2,9 @@ EXEC=appli AllTests
 appli:
 AllTests:
 
-COUVERTURE=y
-PROFILING=y
+COUVERTURE=n
+PROFILING=n
+FUZZING=y
 
 SRC=src
 HEADERS=Include
@@ -21,6 +22,9 @@ ifeq ($(PROFILING),y)
 	CFLAGS+= -pg
 	LDFLAGS+= -pg
 endif
+ifeq ($(FUZZING),y)
+	CC=afl-gcc
+endif
 #############################################################
 
 all: $(EXEC)
@@ -34,6 +38,9 @@ all: $(EXEC)
 profiling: appli
 	./appli $(args)
 	gprof ./appli > profiling.txt
+
+fuzzing: appli
+	afl-fuzz -i afl_in/ -o afl_out/ ./appli  @@ < testconf1.txt
 
 clean:
 	rm *.o *.gcda *.gcno $(EXEC)
