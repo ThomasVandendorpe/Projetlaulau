@@ -39,9 +39,34 @@ int main(int argc,char* argv[])
       do{
 	currentPlayer=board.undoRedoIndex%2+1;
 	symPlayer=board_currentPlayerSymbole(board);
-  	if(play_player(&board,currentPlayer,1)){
+	switch(play_player(&board,currentPlayer,1)){
+	case -3://REDO
+	  board_redo(&board,1);
 	  scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
-	  print_scores(scores);	  
+
+	  break;
+	case -2:
+	  saveLoad(-2,board);
+	  break;
+	case -1://Save Load
+	  saveLoad(-1,board);
+	  break;
+	case 0://UNDO
+	  {
+	    int otherPlayer = (currentPlayer)%2;
+	    int symOtherPlayer = SYM_PLAYER_1+SYM_PLAYER_2-symPlayer;
+	  scores[otherPlayer]-=horizontalScore(board,symOtherPlayer)+verticalScore(board,symOtherPlayer)+diagonal(board,symOtherPlayer)+diagonal1(board,symOtherPlayer);
+	  if(board_undo(&board,1)==-1)
+	     printf("\ncannot undo! play again");
+	  break;
+	  }
+	case 1://coup valide
+	  scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	  print_scores(scores);
+	  break;
+	default://coup invalide
+	  printf("Invalid input. Do another move : ");
+	  break;
 	}
       }while(checkfull(board));
       board_print(board);
@@ -80,14 +105,47 @@ int main(int argc,char* argv[])
 	  currentPlayer=board.undoRedoIndex%2+1;
 	  symPlayer = board_currentPlayerSymbole(board);
 	  if (currentPlayer==1) {
-	    if(play_player(&board,currentPlayer,2)){
+	    switch(play_player(&board,currentPlayer,1)){
+	    case -3://REDO
+	      board_redo(&board,1);
+	      scores[0]+=horizontalScore(board,SYM_PLAYER_1)+verticalScore(board,SYM_PLAYER_1)+diagonal(board,SYM_PLAYER_1)+diagonal1(board,SYM_PLAYER_1);
+	      board_redo(&board,1);
+	      scores[1]+=horizontalScore(board,SYM_PLAYER_2)+verticalScore(board,SYM_PLAYER_2)+diagonal(board,SYM_PLAYER_2)+diagonal1(board,SYM_PLAYER_2);
+	      break;
+	    case -2:
+	      saveLoad(-2,board);
+	      break;
+	    case -1://Save Load
+	      saveLoad(-1,board);
+	      break;
+	    case 0://UNDO
+	      {
+		scores[1]-=horizontalScore(board,SYM_PLAYER_2)+verticalScore(board,SYM_PLAYER_2)+diagonal(board,SYM_PLAYER_2)+diagonal1(board,SYM_PLAYER_2);
+		board_undo(&board,1);
+		scores[0]-=horizontalScore(board,SYM_PLAYER_1)+verticalScore(board,SYM_PLAYER_1)+diagonal(board,SYM_PLAYER_1)+diagonal1(board,SYM_PLAYER_1);
+		board_undo(&board,1);
+		  /*if(board_undo(&board,1)==-1)
+		  printf("\ncannot undo! play again");
+		  break;*/
+	      }
+	    case 1://coup valide
+	      scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	      print_scores(scores);
+	      break;
+	    default://coup invalide
+	      printf("Invalid input. Do another move : ");
+	      break;
+	    }
+	    /*if(play_player(&board,currentPlayer,2)){
 	      scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
 	      print_scores(scores);	  
-	    }
+	      }*/
 	  }
 	  else{
+	    board_print(board);
 	    play_ia(&board,choose);
 	    scores[currentPlayer-1]+=horizontalScore(board,symPlayer)+verticalScore(board,symPlayer)+diagonal(board,symPlayer)+diagonal1(board,symPlayer);
+	    print_scores(scores);
 	  }
 	}while(checkfull(board));
 	board_print(board);

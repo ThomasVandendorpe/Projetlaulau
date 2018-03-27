@@ -99,7 +99,7 @@ int checkEmpty(Board board);
 
 void XMLformating(char* filename,int* w,int* h,int* hs);
 
-void saveLoad(int *num, Board board);
+void saveLoad(int num, Board board);
 
 void highscore(int high,Board board);
 

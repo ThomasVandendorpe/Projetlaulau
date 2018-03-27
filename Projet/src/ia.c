@@ -2,6 +2,17 @@
 #include "board.h"
 #include <stdlib.h>
 
+/**
+* \file    ia.c
+* \brief   Gestion de l'IA
+*/
+
+/**
+*\brief    IA mode facil
+*\detail   revoit le numéro de colonne que l'ia va jouer, en l'occurence, un nombre aléatoire
+*\param    b la grille de jeu
+*\return   -1 si erreur, le numero de la collone sinon
+*/
 int Easy(Board b)
 {
   int i, j, flag, l;
@@ -28,12 +39,23 @@ int Easy(Board b)
     }
   return -1;
 }
+
+/*
+Renvoie 1 si la case à la ligne numOfrow et colonne num sera la prochaine case remplie par l'insertion d'un charactère dans le board
+ */
 int checkEmpty1(Board b,int num,int numOfrow)
 {
-  if(numOfrow==(b.height-1) && b.tab[numOfrow][num]=='\0'){return 1;}
-  else if(b.tab[numOfrow+1][num]!='\0' && b.tab[numOfrow][num]=='\0'){return 1;}//TODO: ERREUR DE SEGEMENTATION CF.VALGRIND
+  if(numOfrow==(b.height-1) && b.tab[numOfrow][num]==VIDE){return 1;}
+  else if(numOfrow+1<b.height && b.tab[numOfrow+1][num]!=VIDE && b.tab[numOfrow][num]==VIDE){return 1;}
   return 0;
 }
+
+/**
+*\brief    IA mode moyen
+*\detail   revoit le numéro de colonne que l'ia va jouer, en fonction des disponibilitées
+*\param    b la grille de jeu
+*\return   -1 si erreur, le numero de la collone sinon
+*/
 int Medium(Board b, char character/*, int *num*/)
 {
   int i, j;
@@ -142,6 +164,13 @@ int Medium(Board b, char character/*, int *num*/)
     }
   return -1;
 }
+
+/**
+*\brief    IA mode moyen
+*\detail   revoit le numéro de colonne que l'ia va jouer, en fonction des disponibilitées
+*\param    b la grille de jeu
+*\return   e numero de la collone sinon, ou Easy en dernier recourt
+*/
 int Hard(Board b/*, int *num*/)
 {
   int i, j;

@@ -5,6 +5,18 @@
 #include "ia.h"
 #include "assert.h"
 
+/**
+* \file    action.c
+* \brief   Gestion du mode de jeu : JcJ ou JvIA
+*/
+
+/**
+ * \brief      L'IA joue un jeton celon la difficultée
+ * \param      board une table de jeu
+ * \param      sym symbole du jeton
+ * \param      difficulty difficulté de l'IA
+ * \return     0
+ */
 int play_ia(Board* board,int difficulty){
   switch(difficulty)
     {
@@ -34,6 +46,19 @@ int play_ia(Board* board,int difficulty){
   return 0;
 }
 
+/**
+ * \brief      Le joueur joue un jeton joue un jeton
+ * \detail     Propose au joueur de sauvegarder / charger / retourner en arriere / ou jouer un jeton
+ * \param      currentPlayer joueur courant
+ * \param      board une table de jeu
+ * \param      sym symbole du jeton
+ * \param      mode undo redo
+ * \return     return 1 si le joueur a jouer (+ joue le coup dans le board)
+               0 s'il veut undo
+	       -1 ou -2 s'il veut  save ou load
+	       -3 s'il veut redo
+	       -4 si l'entrée n'était pas valide (colonne pleine)
+ */
 int play_player(Board* board,int currentPlayer,int mode){
   int num;
   board_print(*board);
@@ -48,32 +73,19 @@ int play_player(Board* board,int currentPlayer,int mode){
     printf("\nPlease enter a number between 1 and %d :", board->width);
     scanf("%d",&num);
   }
-  switch(num){
-  case -1:
-  case -2:
-    saveLoad(&num,*board);
-    break;
-  case -3:
-    board_redo(board,mode);
-    break;
-  case 0:
-    if(board_undo(board,mode)==-1)
-      printf("\ncannot undo! play again");
-    break;
-  default:
-    {
-      if (!board_colIsFull(*board,num)){
-	board_put(board,num);
-	return 1;
-      }
-      else{
-	printf("Invalid input. Do another move : ");
-      }
-	  
-      break;
-    }
+  assert(num>=-3 && num<=board->width);
+  if(num<=0){
+    return num;
   }
-  return 0;
+  if (!board_colIsFull(*board,num)){
+    board_put(board,num);
+    return 1;
+  }
+  else{
+    printf("Invalid input. Do another move : ");
+  }
+  return -4;
+  
 }
 
 
@@ -89,66 +101,5 @@ void player(Board board, int num, char character)
 		}
 	}
 	board_print(board);
-}
-
-void undoRedo(char *x, Board board, int num, int *undoCol,
-	int *undoRow, int *k, int *l, int *z,
-	int *redoCol, int *redoRow, int *q){
-	static int ccounter = 0, dcounter = 0;
-	if(num != 0 && !checkCol(num, board) && num != -3 && !(num<-3) && !(num>board.width) && !(num == -2)){
-		undoCol[*q] = num-1;
-		*k = rowNum(num, board);
-		undoRow[*q] = *k;
-	}
-	if(num != 0 && !checkCol(num, board) && num != -3 && !(num<-3) && !(num>board.width) && !(num == -2)){
-		redoCol[*z] = num-1;
-		*l = rowNum(num, board);
-		redoRow[*z] = *l;
-		*z+=1;
-	}
-	if(num == 0){
-		ccounter +=1;
-		board.tab[undoRow[(*q-1)]][undoCol[(*q-1)]] = VIDE;
-		board_print(board);
-		*q-=1;
-		*z-=1;
-	}
-	else if(num == -3){
-		dcounter += 1;
-		if((dcounter <= ccounter)){
-			board.tab[redoRow[*z]][redoCol[*z]] = *x;
-			board_print(board);
-			*q+=1;
-			undoCol[*q] = redoCol[*z+1];
-			undoRow[*q] = redoRow[*z+1];
-			*z+=1;
-		}
-	}
-	else if(num == -1){
-		printf("Game Loaded Successfully");
-	}
-	else if(num == -2){
-		printf("Game saved Successfully");
-		board_print(board);
-	}
-	else{
-		*q+=1;
-		player(board,num,*x);
-		ccounter = 0;
-		dcounter = 0;
-	}
-}
-
-void undoRedoLimit(int num, int *undoCounter, int *redoCounter){
-	if(num == 0){
-		*undoCounter += 1;
-	}
-	else if(num == -3){
-		*redoCounter += 1;
-	}
-	else{
-		*undoCounter = 0;
-		*redoCounter = 0;
-	}
 }
 

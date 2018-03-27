@@ -4,6 +4,19 @@
 #include <assert.h>
 
 
+/**
+* \file  board.c
+* \brief Gestion de la grille de jeu ainsi que des scores 
+*/
+
+/**
+ * \brief      Cree une table de jeu
+ * \details    initialisation de la grille de jeu ainsi que des scores
+ * \param      width         largeure de la grille
+ * \param      heigh         longueure de la grille
+ * \param      highscores    table des highscores
+ * \return     une grille de jeu selon les paramètres donnés
+ */
 Board board_new(int width,int height,int highScores){
   Board b;
   int i,j;
@@ -25,16 +38,24 @@ Board board_new(int width,int height,int highScores){
   return b;
 }
 
+/**
+ * \brief      vide une table de jeu
+ * \param      board une table de jeu
+ */
 void board_free(Board board){
   int i;
   for(i=0; i<board.height; i++)
     {
       free(board.tab[i]);
     }
+  free(board.last);
   free(board.tab);
 }
 
-
+/**
+ * \brief      affiche la grille
+ * \param      board une table de jeu
+ */
 void board_print(Board board)
 {
   int i, j;
@@ -85,6 +106,13 @@ char board_currentPlayerSymbole(Board b){
   return SYM_PLAYER_2;
 }
 
+/**
+ * \brief      ajoute un jeton dans la grille
+ * \param      board une table de jeu
+ * \param      col la collone où il faut ajouter le jeton
+ * \param      symPlayer la couleur / symbole du jeton
+ * \return     -1 si il y a une erreur
+ */
 int board_put(Board* board,int col){
   int i;
   assert(col>0 && col<=board->width);
@@ -102,21 +130,34 @@ int board_put(Board* board,int col){
   return -1;
 }
 
+/**
+ * \brief      verifie que la colonne soit pleinne
+ * \param      board une table de jeu
+ * \param      col la colonne où il faut ajouter le jeton
+ * \return     -1 si la colonne n'est pas pleine
+ */
 int board_colIsFull(Board board,int col){
   assert(col>0 && col <= board.width);
   return board.tab[0][col-1]!=VIDE;
 }
 
+/*
+  Renvoie la dernière colonne jouée, sinon -1
+ */
 int board_lastPlayCol(Board board){
+  if(board.undoRedoIndex<=0) return -1;
   return board.last[board.undoRedoIndex-1];
 }
 
+/*
+  Renvoie la dernière ligne jouée, sinon -1
+ */
 int board_lastPlayRow(Board board){
   int i,j,n;
   int v;
   i=0;
   j=board.height-1;
-  v = board_lastPlayCol(board);
+  if((v = board_lastPlayCol(board))==-1) return -1;
   n = (i+j)/2;
   while(i<j){
     if(board.tab[n][v]!=VIDE){
@@ -134,6 +175,13 @@ int board_lastPlayRow(Board board){
   return i;
 }
 
+/**
+ * \brief      défait le dernière "board_undo" exécuté
+ * \details    remet le dernier jeton supprimé. 
+ * \param      board une table de jeu
+ * \param      n nombre de undo disponible
+ * \return     res
+ */
 int board_redo(Board* board,int n){
   int i,j,k,res;
   res=-1;
@@ -157,6 +205,13 @@ int board_redo(Board* board,int n){
   return res;
 }
 
+/**
+ * \brief      défait le dernière "board_put" exécuté
+ * \details    enlève le dernier jeton ajouté. 
+ * \param      board une table de jeu
+ * \param      n nombre de undo disponible
+ * \return     res
+ */
 int board_undo(Board* board,int n){
   int i,j,k,res;
   res=-1;
@@ -175,7 +230,13 @@ int board_undo(Board* board,int n){
   return res;
 }
 
-
+/**
+ * \brief      verifie que l'action faite par l'utilisateur soit reconnue
+ * \details    si le nombre entré est compri entre -3 et la taille max de la largeur du tableau, alors la commande est exécutable
+ * \param      num chiffre entré par l'utilisateur
+ * \param      board une table de jeu
+ * \return     1 si la commande n'est pas reconnue, 0 sinon
+ */
 int checknum(int num, Board board)
 {
   if (num<-3 || num>board.width)
@@ -183,17 +244,11 @@ int checknum(int num, Board board)
   return 1;
 }
 
-/*
-int checknum(int num, Board board)
-{
-  while((num<-3) || (num>board.width))
-    {
-      board_print(board);
-      printf("\nPlease enter a number between 1 and %d :", board.width);
-      scanf("%d", &num);
-    }
-  return num;
-}*/
+/**
+ * \brief      verifie que la grille soit pleine
+ * \param      board une table de jeu
+ * \return     0 si la grille est pleine, 1 sinon
+ */
 int checkfull(Board board)
 {
   int i, j;
@@ -211,6 +266,13 @@ int checkfull(Board board)
   return 0;
 }
 
+/**
+ * 
+ *  \brief Renvoie le nombre de 'X' dans le board donné en paramètre.
+ *
+ *  \param board Une table de jeu.
+ *  \return Le nombre de 'X' dans le board.
+ */
 int numX(Board board){
 	int i, j, counter=0;
 	for(i=board.height-1;i>=0;i--){
@@ -223,6 +285,13 @@ int numX(Board board){
 	return counter;
 }
 
+/**
+ * 
+ *  \brief Renvoie le nombre de 'O' dans le board donné en paramètre.
+ *
+ *  \param board Une table de jeu.
+ *  \return Le nombre de 'O' dans le board.
+ */
 int numO(Board board){
 	int i, j, counter=0;
 	for(i=board.height-1;i>=0;i--){
@@ -235,24 +304,48 @@ int numO(Board board){
 	return counter;
 }
 
+/**
+ * 
+ *  \brief Renvoie la première case vide de la colonne donnée en paramètre.
+ *
+ *  \param num Numéro d'une colonne.
+ *  \param board Une table de jeu.
+ *  \return Le numéro d'une ligne.
+ */
+
 int rowNum(int num, Board board){
   int i=0;
   for(i=0;i<board.height;i++){
     if(num == 0){return 0;}
-    if(board.tab[i][num-1]!='\0'){break;}//TODO \0 -> VIDE ??
+    if(board.tab[i][num-1]!=VIDE){break;}
   }
   return i-1;
 }
+
+/**
+ * \brief      verifie que la grille soit vide
+ * \param      board une table de jeu
+ * \return     1 si la grille est vide, 0 sinon
+ */
 int checkEmpty(Board board){
   int n, m;
   for(n=0;n<board.height;n++){
     for(m=0;m<board.width;m++){
-      if(board.tab[n][m] != '\0'){return 0;}//TODO \0 -> VIDE ??
+      if(board.tab[n][m] != VIDE){return 0;}
     }
   }
   return 1;
 }
 
+/**
+ * 
+ *  \brief Vérifie si une colonne est pleine.
+ *
+ *  \param num Le numéro d'une colonne.
+ *  \param board Une table de jeu.
+ *  \return 1 si la colonne num est pleine,0 sinon
+.
+ */
 int checkCol(int num, Board board){
   int i, counter=0;
   for(i=board.height-1;i>=0;i--){
@@ -267,6 +360,13 @@ int checkCol(int num, Board board){
   return counter;
 }
 
+/**
+ * \brief      lit un fichier au forma XML qui contient les informations de la partie 
+ * \param      filename le nom du fichier
+ * \param      w la largeur de la grille
+ * \param      h la hauteur de la grille
+ * \param      hs le highscore
+ */
 void XMLformating(char* filename,int* w,int* h,int* hs)//TODO: déplacer dans un autre fichier? rendre plus générique?
 {
   int width,height,highScores;
@@ -352,7 +452,11 @@ void XMLformating(char* filename,int* w,int* h,int* hs)//TODO: déplacer dans un
   (*hs) = highScores;
 }
 
-
+/**
+ * \brief      lit un fichier contenant les highscores et le met à jour celon le score de la partie
+ * \param      high le score courant
+ * \param      board la grille de jeu
+ */
 void highscore(int high,Board board)
 {
   int i=0, n=0, temp;
@@ -393,11 +497,17 @@ void highscore(int high,Board board)
   fclose(highsc);
   free(highs);
 }
-void saveLoad(int *num, Board board){
+
+/**
+ * \brief      sauvegarde ou enregistre une partie
+ * \param      num -2 pour save -1 pour enregistrer
+ * \param      board la grille de jeu
+ */
+void saveLoad(int num, Board board){
   FILE *pfile;
   int r, t;
   pfile = NULL;
-  if(*num == -2){
+  if(num == -2){
     printf("Game Saved Successfully");
     pfile = fopen("save.txt", "w");
     for(r=board.height-1;r>=0;r--){
@@ -407,7 +517,7 @@ void saveLoad(int *num, Board board){
     }
     fclose(pfile);
   }
-  if(*num == -1){
+  if(num == -1){
     pfile = fopen("save.txt", "r");
     if(pfile==NULL){
       fprintf(stderr,"Pas de fichier de sauvegarde.\n");
