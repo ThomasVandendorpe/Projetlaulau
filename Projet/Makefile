@@ -4,7 +4,7 @@ AllTests:
 
 COUVERTURE=n
 PROFILING=n
-FUZZING=y
+FUZZING=n
 
 SRC=src
 HEADERS=Include
