@@ -117,7 +117,7 @@ time   seconds   seconds    calls  us/call  us/call  name
 \end{lstlisting}
 \end{scriptsize}
 
-On voit que les fonctions couûteuses sont la fonction d'affichage, et les fonctions de calcul du score. On pourra difficilement optimiser la fonction d'affichage qui nécessitera toujours de parcourir le tableau. Par contre, les fonctions de calculs des scores peuvent être facilement améliorées. Au lieux de parcourir tout le tableau du puissance 4 pour recalculer tous les scores, on peut simplement mettre à jour les scores en prenant en compte seulement les changements affectés par le coup joué précédent, on fait ainsi moins de calculs, mais on stocke plus de chose en mémoire.
+On voit que les fonctions coûteuses sont la fonction d'affichage, et les fonctions de calcul du score. On pourra difficilement optimiser la fonction d'affichage qui nécessitera toujours de parcourir le tableau. Par contre, les fonctions de calculs des scores peuvent être facilement améliorées. Au lieux de parcourir tout le tableau du puissance 4 pour recalculer tous les scores, on peut simplement mettre à jour les scores en prenant en compte seulement les changements affectés par le coup joué précédent, on fait ainsi moins de calculs, mais on stocke plus de chose en mémoire.
 
 Nouveau profiling avec les modifications:
 
@@ -153,8 +153,40 @@ Nous avons donc grandement amélioré les perfomances du programme, qui passe ma
 \item Ajout de commentaires pour doxygen
 \end{itemize}
 
-\newpage
+\subsection{Séance 8}
+Lors de cette séance, nous avons utilisé Valgrind (perf n'étant pas disponible) pour analyser notre programme, afin de voir le pourcentage de "miss".
+Nous avons diminué de moitié la taux de cache misses en faisant des modifications dans notre code source, notamment au niveau des boucles et des conditions de branchement.
+Résultats après une partie 'joueur contre joueur' :
+\begin{scriptsize}
+\begin{lstlisting}
 
+==31722== I   refs:      5,061,558
+==31722== I1  misses:        1,584
+==31722== LLi misses:        1,484
+==31722== I1  miss rate:      0.03%
+==31722== LLi miss rate:      0.03%
+==31722== 
+==31722== D   refs:      2,113,672  (1,280,321 rd   + 833,351 wr)
+==31722== D1  misses:        5,044  (    3,035 rd   +   2,009 wr)
+==31722== LLd misses:        4,204  (    2,287 rd   +   1,917 wr)
+==31722== D1  miss rate:       0.2% (      0.2%     +     0.2%  )
+==31722== LLd miss rate:       0.2% (      0.2%     +     0.2%  )
+==31722== 
+==31722== LL refs:           6,628  (    4,619 rd   +   2,009 wr)
+==31722== LL misses:         5,688  (    3,771 rd   +   1,917 wr)
+==31722== LL miss rate:        0.1% (      0.1%     +     0.2%  )
+
+\end{lstlisting}
+\end{scriptsize}
+Le taux de miss que nous avons réussit à atteindre est correct, bien que encore améliorable, mais ça nécessiterait de modifier lourdement le code source, ce qui prendrait un temps significatif pour n'améliorer que très peu les performances.
+ 
+\paragraph{Résumé des modifications}
+\begin{itemize}
+\item Optimisation du code pour minimiser le taux de cache et branch misses
+\end{itemize}
+
+
+\newpage
 \appendix
 %\chapter{Makefile}
   \begin{lstlisting}
