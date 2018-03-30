@@ -1,0 +1,51 @@
+TESTS:
+
+couverture:
+	+make clean
+	+démo:
+		-make appli
+		-./appli config1.xml < exemples/input/input1.txt
+		-./couverture.sh
+	+limite
+		-tests correctes??
+
+
+tests unitaire:
+	+démo:
+		-fichier src/CuTestTest.c
+		-make tests
+		-./couverture.sh
+	+problème:
+		-aléatoire
+		-lecture entrée standard
+		-affichage
+		-fonction exit
+
+tests aléatoire:
+      +make clean
+      +Utilisation de valgrind
+      +démo sur projet Initial: ./random_tests 1
+      +démo sur projet: ./random_tests 1
+      (démo sur taille 10 + couverture à la fin si le temps)
+
+tests basiques:
+      +make clean
+      +fichier tests + résultats attendu si possible
+      (démo ./tests + couverture à la fin si le temps)
+
+-----------------------------------------------------------------------------
+TROUVER DES ERREURS:
+valgrind:
+	+make clean
+	+demo projet Initial: valgrind ./appli config1.xml < DEMO_input.txt
+	+erreur segmentation
+	+fuite mémoires
+
+Klee:
+	+??
+
+-----------------------------------------------------------------------------
+Profiling:
+	+make clean
+	+demo sur Projet initial: make profiling args=configProfiling.xml
+	+demo Projet: make profiling args=exemples/config/config5.xml
