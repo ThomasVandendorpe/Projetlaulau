@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "board.h"
 #include "actions.h"
 #include "score.h"
@@ -29,18 +33,19 @@ int main(int argc,char* argv[])
     exit(1);
   }
   XMLformating(argv[1],&width,&height,&highScores);
-  char playAgain;
+  char playAgain='n';
   do{
     Board board = board_new(width,height,highScores);
     //initialisation tableaux
-    int flag, choose;
+    int flag, choose=0;
 
     //lancement du jeu
     printf("\n\n                     **** WELCOME TO THE GAME ****\n\n");
     printf("Player1 vs Player2: press 1 \n\nPlayer vs Computer: press 2 \n\n");
     scanf("%d", &choose);
-    while((choose!=1 && choose!=2) || isalpha(choose))
+    while((choose!=1 && choose!=2))
       {
+	while(getc(stdin)!='\n');
 	printf("Enter 1 or 2\n");
 	printf("Player1 vs Player2: press 1 \n\nPlayer vs Computer: press 2 \n\n");
 	scanf("%d", &choose);
@@ -59,10 +64,10 @@ int main(int argc,char* argv[])
 
 	  break;
 	case -2:
-	  saveLoad(-2,board);
+	  saveLoad(-2,&board);
 	  break;
 	case -1://Save Load
-	  saveLoad(-1,board);
+	  saveLoad(-1,&board);
 	  break;
 	case 0://UNDO
 	  {
@@ -126,10 +131,10 @@ int main(int argc,char* argv[])
 	      scores[1]+=horizontalScore(board,SYM_PLAYER_2)+verticalScore(board,SYM_PLAYER_2)+diagonal(board,SYM_PLAYER_2)+diagonal1(board,SYM_PLAYER_2);
 	      break;
 	    case -2:
-	      saveLoad(-2,board);
+	      saveLoad(-2,&board);
 	      break;
 	    case -1://Save Load
-	      saveLoad(-1,board);
+	      saveLoad(-1,&board);
 	      break;
 	    case 0://UNDO
 	      {

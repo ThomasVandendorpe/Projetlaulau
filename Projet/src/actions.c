@@ -65,8 +65,9 @@ int play_player(Board* board,int currentPlayer,int mode){
   printf("\nplayer %d enter number of the column:",currentPlayer);
   num=-100;
   scanf("%d",&num);
+  char ch;
   while(!checknum(num,*board)){
-    getc(stdin);
+    while((ch = getchar()) != '\n' && ch!=EOF);
     board_print(*board);
     printf("\nPlease enter a number between 1 and %d :", board->width);
     scanf("%d",&num);

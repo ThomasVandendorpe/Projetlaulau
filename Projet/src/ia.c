@@ -42,11 +42,11 @@ int Easy(Board b)
 
 /**
 *\brief    check si vide
-*\detail   Renvoie 1 si la case à la ligne numOfrow et colonne num sera la prochaine case remplie par l'insertion d'un charactère dans le board
+*\detail   Indique si la case à la ligne numOfrow et colonne num sera la prochaine case remplie par l'insertion d'un charactère dans le board
 *\param    b la grille de jeu
 *\param    num la collone
 *\param    num0frow la ligne
-*\return   1 si vide , 0 sinon
+*\return   1 si la case à la ligne numOfrow et colonne num sera la prochaine case remplie par l'insertion d'un charactère dans le board, 0 sinon
 */
 
 int checkEmpty1(Board b,int num,int numOfrow)
@@ -58,10 +58,10 @@ int checkEmpty1(Board b,int num,int numOfrow)
 
 /**
 *\brief    IA mode moyen
-*\detail   revoit le numéro de colonne que l'ia va jouer, en fonction des disponibilitées
+*\detail   Indique le numéro de colonne à jouer pour empécher une suite de 4 caractères identiques à la suite (sur ligne,colonne, ou diagonale)
 *\param    b la grille de jeu
-*\param    character symbol de l'IA
-*\return   la collone joeur par l'IA, -1 si erreur
+*\param    character les caractères dont il faut empécher la suite
+*\return   Le numéro de colonne à jouer pour empécher une suite de 4 caractères identiques à la suite (sur ligne,colonne, ou diagonale)
 */
 int Medium(Board b, char character/*, int *num*/)
 {

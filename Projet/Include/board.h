@@ -36,20 +36,6 @@ Renvoie 0 si le board est plein, 1 sinon
  */
 int checkfull(Board board);
 
-/*
-Renvoie le nombre de 'O' dans le board
- */
-int numO(Board board);
-
-/*
-Renvoie le nombre de 'X' dans le board
- */
-int numX(Board board);
-
-/*
-Renvoie 1 si la colonne num du board est pleine, sinon 0
- */
-int checkCol(int num, Board board);
 
 /*
 Renvoie le symbole de joueur courant
@@ -92,14 +78,9 @@ int board_lastPlayRow(Board board);
 
 int checknum(int num, Board board);
 
-
-int rowNum(int num, Board board);
-
-int checkEmpty(Board board);
-
 void XMLformating(char* filename,int* w,int* h,int* hs);
 
-void saveLoad(int num, Board board);
+void saveLoad(int num, Board* board);
 
 void highscore(int high,Board board);
 

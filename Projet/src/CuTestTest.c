@@ -1,7 +1,9 @@
+#include <stdio.h>
 #include "CuTest.h"
 #include "actions.h"
 #include "board.h"
 #include "score.h"
+#include "ia.h"
 
 Board boardVide (int w,int h){
   return board_new(w,h,1);
@@ -219,35 +221,6 @@ void Test_checkfull(CuTest *tc){
   CuAssertIntEquals(tc, expected, actual);
 }
 
-void Test_numX(CuTest *tc){
-  Board b=boardVide(8,7);
-  int expected,actual;
-  b.tab[2][3]='X';
-  b.tab[6][4]='X';
-  b.tab[1][7]='X';
-  b.tab[0][0]='X';
-  b.tab[6][7]='O';
-  b.tab[5][5]='O';
-  b.tab[0][6]='O';
-  actual = numX(b);
-  expected = 4;
-  CuAssertIntEquals(tc, expected, actual);
-}
-
-void Test_numO(CuTest *tc){
-  Board b=boardVide(8,7);
-  int expected,actual;
-  b.tab[2][3]='X';
-  b.tab[1][7]='X';
-  b.tab[0][0]='X';
-  b.tab[6][7]='O';
-  b.tab[5][5]='O';
-  b.tab[2][1]='O';
-  b.tab[0][6]='O';
-  actual = numO(b);
-  expected = 4;
-  CuAssertIntEquals(tc, expected, actual);
-}
 
 void Test_board_lastPlayRow(CuTest *tc){
   Board b = boardVide(5,5);
@@ -268,58 +241,6 @@ void Test_board_lastPlayRow(CuTest *tc){
   board_put(&b,3);
   actual = board_lastPlayRow(b);
   expected = 0;
-  CuAssertIntEquals(tc, expected, actual);
-}
-
-void Test_rowNum(CuTest *tc){
-  Board b = boardVide(7,8);
-  int expected,actual;
-
-  actual = rowNum(4,b);
-  expected = 7;
-  CuAssertIntEquals(tc, expected, actual);
-
-  board_put(&b,4);
-  board_put(&b,4);
-  board_put(&b,4);
-  actual = rowNum(4,b);
-  expected = 4;
-  CuAssertIntEquals(tc, expected, actual);
-}
-
-void Test_checkEmpty(CuTest *tc){
-  Board b = boardVide(5,7);
-  int expected,actual;
-
-  actual = checkEmpty(b);
-  expected = 1;
-  CuAssertIntEquals(tc, expected, actual);
-
-  board_put(&b,4);
-  actual = checkEmpty(b);
-  expected = 0;
-  CuAssertIntEquals(tc, expected, actual);
-}
-
-void Test_checkCol(CuTest *tc){
-  Board b1 = boardVide(4,4);
-  int expected,actual;
-
-  actual = checkCol(3,b1);
-  expected = 0;
-  CuAssertIntEquals(tc, expected, actual);
-
-  board_put(&b1,3);
-  board_put(&b1,3);
-  board_put(&b1,3);
-  actual = checkCol(3,b1);
-  expected = 0;
-  CuAssertIntEquals(tc, expected, actual);
-  
-  
-  board_put(&b1,3);
-  actual = checkCol(3,b1);
-  expected = 1;
   CuAssertIntEquals(tc, expected, actual);
 }
 
@@ -447,15 +368,188 @@ void Test_checkEmpty1(CuTest *tc){
  Board b = boardVide(5,7);
   int expected,actual;
 
-  actual = checkEmpty1(b,0,4);
+  actual = checkEmpty1(b,0,6);
   expected = 1;
   CuAssertIntEquals(tc, expected, actual);
 
   board_put(&b,1);
-  actual = checkEmpty1(b,0,3);
+  actual = checkEmpty1(b,0,5);
   expected = 1;
   CuAssertIntEquals(tc, expected, actual);
 }
+
+void Test_Medium(CuTest *tc){
+  Board b = boardVide(20,20);
+  int expected,actual;
+  //TEST HORIZONTAL
+  board_put(&b,1);
+  board_put(&b,1);
+  board_put(&b,2);
+  board_put(&b,2);
+  board_put(&b,3);
+  actual = Medium(b,SYM_PLAYER_1);
+  expected = 4;
+  CuAssertIntEquals(tc, expected, actual);
+  board_put(&b,actual);
+
+  board_put(&b,5);
+  board_put(&b,5);
+  board_put(&b,6);
+  board_put(&b,6);
+  board_put(&b,8);
+  actual = Medium(b,SYM_PLAYER_1);
+  expected = 7;
+  CuAssertIntEquals(tc, expected, actual);
+  board_put(&b,actual);
+
+  board_put(&b,11);
+  board_put(&b,11);
+  board_put(&b,12);
+  board_put(&b,12);
+  board_put(&b,13);
+  actual = Medium(b,SYM_PLAYER_1);
+  expected = 10;
+  CuAssertIntEquals(tc, expected, actual);
+  board_put(&b,actual);
+  board_put(&b,13);
+  board_put(&b,14);
+
+  board_put(&b,16);
+  board_put(&b,16);
+  board_put(&b,18);
+  board_put(&b,18);
+  board_put(&b,19);
+  actual = Medium(b,SYM_PLAYER_1);
+  expected = 17;
+  CuAssertIntEquals(tc, expected, actual);
+  board_put(&b,actual);
+
+  //TEST VERTICAL
+  board_put(&b,1);
+  board_put(&b,2);
+  board_put(&b,1);
+  board_put(&b,2);
+  board_put(&b,1);
+  actual = Medium(b,SYM_PLAYER_1);
+  expected = 1;
+  CuAssertIntEquals(tc, expected, actual);
+  board_put(&b,actual);
+
+  //TEST DIAGONAL bas gauche -> haut droite
+  board_free(b);
+  b = boardVide(10,10);
+  b.tab[9][0] = SYM_PLAYER_1;
+  b.tab[9][1] = SYM_PLAYER_1;
+  b.tab[8][1] = SYM_PLAYER_1;
+  b.tab[9][2] = SYM_PLAYER_1;
+  b.tab[8][2] = SYM_PLAYER_1;
+  b.tab[7][2] = SYM_PLAYER_1;
+  b.tab[9][3] = SYM_PLAYER_2;
+  b.tab[8][3] = SYM_PLAYER_2;
+  b.tab[7][3] = SYM_PLAYER_2;
+  b.tab[6][3] = SYM_PLAYER_1;
+  b.tab[9][2] = SYM_PLAYER_2;
+  int i;
+  for(i=1;i<=4;i++){
+    b.tab[10-i][i-1] = VIDE;
+    actual = Medium(b,SYM_PLAYER_1);
+    expected = i;
+    CuAssertIntEquals(tc, expected, actual);
+    b.tab[10-i][i-1] = SYM_PLAYER_1;
+  }
+
+   //TEST DIAGONAL haut gauche -> bas droite
+  board_free(b);
+  b = boardVide(10,10);
+  b.tab[9][0] = SYM_PLAYER_2;
+  b.tab[8][0] = SYM_PLAYER_2;
+  b.tab[7][0] = SYM_PLAYER_2;
+  b.tab[6][0] = SYM_PLAYER_1;
+  b.tab[9][1] = SYM_PLAYER_2;
+  b.tab[8][1] = SYM_PLAYER_2;
+  b.tab[7][1] = SYM_PLAYER_1;
+  b.tab[9][2] = SYM_PLAYER_2;
+  b.tab[8][2] = SYM_PLAYER_1;
+  b.tab[9][3] = SYM_PLAYER_1;
+
+  for(i=1;i<=4;i++){
+    b.tab[10-5+i][i-1] = VIDE;
+    actual = Medium(b,SYM_PLAYER_1);
+    expected = i;
+    CuAssertIntEquals(tc, expected, actual);
+    b.tab[10-5+i][i-1] = SYM_PLAYER_1;
+  }
+}
+
+void Test_XMLformating(CuTest *tc){
+  int expected,actual;
+  int w,h,hs;
+  XMLformating("exemples/config/config1.xml",&w,&h,&hs);
+  
+  actual = w;
+  expected = 7;
+  CuAssertIntEquals(tc, expected, actual);
+
+  actual = h;
+  expected = 6;
+  CuAssertIntEquals(tc, expected, actual);
+
+  actual = hs;
+  expected = 5;
+  CuAssertIntEquals(tc, expected, actual);
+
+  XMLformating("exemples/config/config2.xml",&w,&h,&hs);
+  actual = w;
+  expected = 7;
+  CuAssertIntEquals(tc, expected, actual);
+
+  actual = h;
+  expected = 6;
+  CuAssertIntEquals(tc, expected, actual);
+
+  actual = hs;
+  expected = 5;
+  CuAssertIntEquals(tc, expected, actual);
+}
+
+void Test_saveLoad(CuTest *tc){
+  Board b = boardVide(10,10);
+  char t[10][10];
+  int expected,actual,i,j;
+
+  board_put(&b,3);
+  board_put(&b,1);
+  board_put(&b,3);
+  board_put(&b,5);
+  board_put(&b,3);
+  board_put(&b,3);
+  board_put(&b,2);
+
+  saveLoad(-2,&b);
+  for(i=0;i<10;i++){
+    for(j=0;j<10;j++){
+      t[i][j] = b.tab[i][j];
+    }
+  }
+
+  board_put(&b,1);
+  board_put(&b,2);
+  board_put(&b,3);
+  board_put(&b,5);
+  board_put(&b,7);
+  board_put(&b,2);
+  board_put(&b,9);
+
+  saveLoad(-1,&b);
+  for(i=0;i<10;i++){
+    for(j=0;j<10;j++){
+      actual = b.tab[i][j];
+      expected = t[i][j];
+      CuAssertIntEquals(tc, expected, actual);
+    }
+  }
+}
+
 
 CuSuite* StrUtilGetSuite() {
     CuSuite* suite = CuSuiteNew();
@@ -467,17 +561,14 @@ CuSuite* StrUtilGetSuite() {
     SUITE_ADD_TEST(suite, Test_board_redo);
     SUITE_ADD_TEST(suite, Test_checknum);
     SUITE_ADD_TEST(suite, Test_checkfull);
-    SUITE_ADD_TEST(suite, Test_numX);
-    SUITE_ADD_TEST(suite, Test_numO);
     SUITE_ADD_TEST(suite, Test_board_lastPlayRow);
-    SUITE_ADD_TEST(suite, Test_rowNum);
-    SUITE_ADD_TEST(suite, Test_checkEmpty);
-    SUITE_ADD_TEST(suite, Test_checkCol);
     SUITE_ADD_TEST(suite, Test_horizontalScore);
     SUITE_ADD_TEST(suite, Test_verticalScore);
     SUITE_ADD_TEST(suite, Test_diagonal);
     SUITE_ADD_TEST(suite, Test_diagonal1);
     SUITE_ADD_TEST(suite, Test_checkEmpty1);
-
+    SUITE_ADD_TEST(suite, Test_Medium);
+    SUITE_ADD_TEST(suite, Test_XMLformating);
+    SUITE_ADD_TEST(suite, Test_saveLoad);
     return suite;
 }
