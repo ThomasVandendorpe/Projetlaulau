@@ -85,9 +85,8 @@ Après avoir généré la documentation html, on obtient:
 \chapter{Qualité des tests}
 On ne peut pas parler de qualité du logiciel sans parler des tests. Bien que ne prouvant pas l'absence de bug dans un code, les tests exécutés sur un programme sont de bons indicateurs sur sa qualité. Il est nécessaire de ``penser tests'' tôt dans la création d'un logiciel, car les tests sont écrits au fur et à mesure de la conception et sont destinés à être exécutés plusieurs fois, ceci afin de vérifier que les modifications et ajouts dans le code permettent toujours de valider les tests précédents. Et ceci est d'autant plus vrai lors d'un projet en équipe où les modifications des uns peuvent affecter les modifications des autres. Nous allons dans cette partie présenter deux méthodes permettant d'assurer une certaine rigueur dans les tests : l'une au sujet des tests unitaires et la seconde concernant l'analyse de couverture.
 \section{Les tests unitaires}
-Les tests unitaires sont des tests s'appliquant à une partie d'un programme et permettant de vérifier le programme par bloc. Un bloc de programme est en fait une fonction, et l'idée est d'écrire un test qui appelle une certaine fonction avec certains paramètres (judicieusement choisis si possible, c'est-à-dire couvrant le plus de branches possibles) et de vérifier que le résultat renvoyé par la fonction est bien le résultat attendu. Il est possible d'écrire ces tests en suivant un processus de développement dirigé par les tests, qui consiste à écrire les tests avant d'écrire la fonction correspondante. Mais on peut également les écrire si on dispose déjà de la fonction à tester en utilisant sa spécification (qui devrait être facilement accessible si le code a été documenté avec un outil adéquat), ce qui arrive si l'on est amené à retoucher un code existant.
+Les tests unitaires sont des tests s'appliquant à une partie d'un programme et permettant de vérifier le programme par bloc. Un bloc de programme est en fait une fonction, et l'idée est d'écrire un test qui appelle une certaine fonction avec certains paramètres (judicieusement choisis si possible, c'est-à-dire couvrant le plus de branches possibles) et de vérifier que le résultat renvoyé par la fonction est bien le résultat attendu. Il est possible d'écrire ces tests en suivant un processus de développement dirigé par les tests, qui consiste à écrire les tests avant d'écrire la fonction correspondante. Mais on peut également les écrire si on dispose déjà de la fonction à tester en utilisant sa spécification (qui devrait être facilement accessible si le code a été documenté avec un outil adéquat), ce qui arrive si l'on est amené à retoucher un code existant. Les tests unitaires nécessitent d'avoir découpé son code en fonctions, et de pensé à faire retourner des valeurs intéressantes à ces fonctions afin que ces dernières soit facilement testables.
 
-TODO : Nécessiter de prendre en compte/modifier des fonctions pour permettre le test unitaire (valeur retour, etc.) + découpage code en fonction.
 \paragraph{Exemple}
 Illustrons ce principe de tests unitaires à l'aide d'un exemple tiré d'un programme de puissance 4 (en langage C). Nous souhaitons écrire un test pour la fonction suivante :
 
@@ -315,7 +314,7 @@ I fait référence au cache instruction, I1 au cache le plus rapide d'accès et 
 \newline
 D fait référence au cache de données (Data) et fonctionne sur le même principe.
 Les branchements quant à eux sont simplement énoncés à la fin de l'analyse.
-
+\newpage
 \begin{scriptsize}
 \begin{lstlisting}
 ==4891== 
