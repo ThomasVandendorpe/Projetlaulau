@@ -8,7 +8,7 @@ AllTests:
 #####
 #Mettrer y comme valeur pour activer:
 
-COUVERTURE=n
+COUVERTURE=y
 PROFILING=y
 FUZZING=n
 
