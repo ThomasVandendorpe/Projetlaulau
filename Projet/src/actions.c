@@ -45,16 +45,17 @@ int play_ia(Board* board,int difficulty){
   return 0;
 }
 
+
 /**
  * \brief      Le joueur fait une action
  * \detail     Propose au joueur de sauvegarder / charger / retourner en arriere / ou jouer un jeton
- * \param      board une table de jeu
- * \param      currentPlayer joueur courant
- * \param      mode undo redo
- * \return     return 1 si le joueur a jouer (+ joue le coup dans le board)
-               0 s'il veut undo
-	       -1 ou -2 s'il veut  save ou load
-	       -3 s'il veut redo
+ * \param      board : une table de jeu
+ * \param      currentPlayer : joueur courant
+ * \param      mode : undo redo
+ * \return     return 1 si le joueur a joué (+ joue le coup dans le board)
+               0 si il veut undo
+	       -1 ou -2 si il veut  save ou load
+	       -3 si il veut redo
 	       -4 si l'entrée n'était pas valide (colonne pleine)
  */
 int play_player(Board* board,int currentPlayer,int mode){

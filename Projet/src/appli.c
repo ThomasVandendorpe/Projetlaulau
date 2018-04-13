@@ -23,7 +23,6 @@
  * \param      argc argument qui est le nom du fichier XML contenant les informations de la partie
  * \return     0
  */
-
 int main(int argc,char* argv[])
 {
   int width,height,highScores;

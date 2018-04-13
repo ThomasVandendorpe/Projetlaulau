@@ -12,8 +12,8 @@
 /**
  * \brief      Cree une table de jeu
  * \details    initialisation de la grille de jeu ainsi que des scores
- * \param      width         largeure de la grille
- * \param      heigh         longueure de la grille
+ * \param      width         largeur de la grille
+ * \param      heigh         longueur de la grille
  * \param      highscores    table des highscores
  * \return     une grille de jeu selon les paramètres donnés
  */
@@ -131,7 +131,7 @@ int board_put(Board* board,int col){
 }
 
 /**
- * \brief      verifie que la colonne soit pleinne
+ * \brief      verifie que la colonne soit pleine
  * \param      board une table de jeu
  * \param      col la colonne où il faut ajouter le jeton
  * \return     -1 si la colonne n'est pas pleine
@@ -245,7 +245,7 @@ int checknum(int num, Board board)
 }
 
 /**
- * \brief      verifie que la grille soit pleine
+ * \brief      verifie si la grille est pleine
  * \param      board une table de jeu
  * \return     0 si la grille est pleine, 1 sinon
  */
@@ -360,7 +360,7 @@ void XMLformating(char* filename,int* w,int* h,int* hs)
 }
 
 /**
- * \brief      lit un fichier contenant les highscores et le met à jour celon le score de la partie
+ * \brief      lit un fichier contenant les highscores et le met à jour selon le score de la partie
  * \param      high le score courant
  * \param      board la grille de jeu
  */

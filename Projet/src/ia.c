@@ -8,10 +8,10 @@
 */
 
 /**
-*\brief    IA mode facil
-*\detail   revoit le numéro de colonne que l'ia va jouer, en l'occurence, un nombre aléatoire
+*\brief    IA mode facile
+*\detail   renvoit le numéro de colonne que l'ia va jouer, en l'occurence, un nombre aléatoire
 *\param    b la grille de jeu
-*\return   -1 si erreur, le numero de la collone sinon
+*\return   -1 si erreur, le numero de la colonne sinon
 */
 int Easy(Board b)
 {
@@ -48,7 +48,6 @@ int Easy(Board b)
 *\param    num0frow la ligne
 *\return   1 si la case à la ligne numOfrow et colonne num sera la prochaine case remplie par l'insertion d'un charactère dans le board, 0 sinon
 */
-
 int checkEmpty1(Board b,int num,int numOfrow)
 {
   assert(num>=0 && num<b.width);
@@ -178,7 +177,7 @@ int Medium(Board b, char character/*, int *num*/)
 *\brief    IA mode moyen
 *\detail   revoit le numéro de colonne que l'ia va jouer, en fonction des disponibilitées
 *\param    b la grille de jeu
-*\return   e numero de la collone sinon, ou Easy en dernier recourt
+*\return   e numero de la colonne sinon, ou Easy en dernier recourt
 */
 int Hard(Board b/*, int *num*/)
 {
