@@ -5,7 +5,9 @@
 \usepackage{listings}
 \usepackage{titlesec}
 \usepackage{color}
+\usepackage{appendix}
 \usepackage{graphicx}
+\graphicspath{ {.} }
 
 \titleformat{\chapter}[display]
             {\normalfont\bfseries}{}{0pt}{\Huge}
@@ -76,6 +78,9 @@ Board board_new(int width,int height,int highScores){
 
 \end{lstlisting}
 \end{scriptsize}
+\begin{center}
+\include{width=20cm}{board}
+\end{center}
 
 \chapter{Qualité des tests}
 On ne peut pas parler de qualité du logiciel sans parler des tests. Bien que ne prouvant pas l'absence de bug dans un code, les tests exécutés sur un programme sont de bons indicateurs sur sa qualité. Il est nécessaire de ``penser tests'' tôt dans la création d'un logiciel, car les tests sont écrits au fur et à mesure de la conception et sont destinés à être exécutés plusieurs fois, ceci afin de vérifier que les modifications et ajouts dans le code permettent toujours de valider les tests précédents. Et ceci est d'autant plus vrai lors d'un projet en équipe où les modifications des uns peuvent affecter les modifications des autres. Nous allons dans cette partie présenter deux méthodes permettant d'assurer une certaine rigueur dans les tests: l'une au sujet des tests unitaires et la seconde concernant l'analyse de couverture.
