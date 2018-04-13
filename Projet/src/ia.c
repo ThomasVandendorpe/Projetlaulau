@@ -51,6 +51,8 @@ int Easy(Board b)
 
 int checkEmpty1(Board b,int num,int numOfrow)
 {
+  assert(num>=0 && num<b.width);
+  assert(numOfrow>=0 && numOfrow<b.height);
   if(numOfrow==(b.height-1) && b.tab[numOfrow][num]==VIDE){return 1;}
   else if(numOfrow+1<b.height && b.tab[numOfrow+1][num]!=VIDE && b.tab[numOfrow][num]==VIDE){return 1;}
   return 0;
