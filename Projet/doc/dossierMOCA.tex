@@ -20,31 +20,33 @@
 
 \chapter{Introduction}
 
-Ce dossier rassemble les travaux effectués lors du cours de ``Méthodes et Outils pour la Conception Avancée''. L'objectif ici, est de montrer les bonnes pratiques à avoir lors de la conception d'un programme. Nous illustrerons ces bonnes pratiques à partir de l'exemple d'un programme de puissance 4 (en langage C), initialement codé de façon peu rigoureuse, que nous tenterons d'améliorer tout au long de ce dossier. Par améliorer, on entend  la maintenabilité, la réutilisabilité et la documentation du code, la qualité et la couverture des tests, la détection de défauts et d'erreurs, l'analyse et l'amélioration des performances, ainsi que l'analyse de la vulnérabilité à certaines attaques. Nous expliquerons les différentes méthodes et outils permettants ces améliorations...
+Ce dossier rassemble les travaux effectués lors du cours de ``Méthodes et Outils pour la Conception Avancée''. L'objectif ici, est de montrer les bonnes pratiques à avoir lors de la conception d'un programme. Nous utiliserons ces bonnes pratiques sur un exemple de programme de puissance 4 (en langage C), initialement codé de façon peu rigoureuse, que nous améliorerons tout au long de ce dossier. Par améliorer, on entend  la maintenabilité, la réutilisabilité et la documentation du code, la qualité et la couverture des tests, la détection de défauts et d'erreurs, l'analyse et l'amélioration des performances, ainsi que l'analyse de la vulnérabilité à certaines attaques. Nous présenterons également des résultats produits par divers outils, permettant de se rendre compte des modifications apportées. Le but ici n'est pas d'expliquer le fonctionnement en détail de ces outils mais d'expliquer les différents concepts et méthodes permettant ces améliorations, et de les illustrer.
 
 \chapter{Modularité, maintenabilité, réutilisabilité}
 \section{Structuration}
-L'élément le plus important pour gagner du temps dans notre travail, est l'organisation. La première chose que l'on commence à faire, est de structurer le code en parties pour s'y retrouver le mieux possible. Cela implique de rassembler les fonctions par thèmes dans différents fichiers. Lors de la séparation en plusieurs fichier, les variables globales initiales sont devenues obsolètes, laissant place à un type struct plus facile d'utilisation entre les fichiers. L'application est désormais décomposée en plusieurs modules ce qui permet de faire des tests unitaire indépendamment des autres, mais aussi de trouver et corriger des erreurs plus facilement lors de la compilation. Dans le cas de notre puissance 4, nous avons séparé l'application en 5 fichiers :
+L'élément le plus important pour gagner du temps dans notre travail, est l'organisation. La première chose que l'on commence à faire, est de structurer le code en parties pour s'y retrouver le mieux possible. Cela implique de rassembler les fonctions par thèmes dans différents fichiers. Lors de la séparation en plusieurs fichiers, les variables globales initiales sont devenues obsolètes, laissant place à un type struct plus facile d'utilisation entre les fichiers. L'application est désormais décomposée en plusieurs modules ce qui permet de faire des tests unitaires indépendamment des autres, mais aussi de trouver et corriger des erreurs plus facilement lors de la compilation.
+\paragraph{Exemple}
+Dans le cas de notre programme de puissance 4, nous avons séparé l'application en 5 fichiers selon les fonctions initialement présentes :
 \begin{itemize}
 \item appli.c : contient la fonction main
-\item board.c/board.h : les fonctions manipulant la structure board(le plateau de puissance 4)
-\item action.c/action.h : les actions(les règles) du jeu
+\item board.c/board.h : les fonctions manipulant la structure board (le plateau de puissance 4)
+\item action.c/action.h : les actions (les règles) du jeu
 \item ia.c/ia.h : les IAs
-\item score.c/score.h: les informations de scores
+\item score.c/score.h : les informations de scores
 \end{itemize} 
-Pour que l'environnement de travaille soit propre et accessible, on regroupe les fichiers sources dans un même dossier, de même pour les includes, les tests et documents de sorte à ne pas chercher nos fichiers.
+Pour que l'environnement de travail soit propre et accessible, on regroupe les fichiers sources dans un même dossier, de même pour les includes, les tests et documents de sorte à faciliter la chercher des fichiers.
 
 
 \section{Documentation}
-Pour que le code d'une application soit compris par un large publique, sans devoir expliquer chaque fonctions du code, on emploie des moyens à longue durée. Comme par exemple le renommage des variables et des fonctions selon leur usage, ce qui permet une compréhension plus aisée du code. D'autre part, Doxygen permet de faire une documentation succinct, il suffit d'écrire un commentaire pour chaque fonctions, décrivant son utilisation et fonctionnement. Doxygen permet d'avoir une documentation élémentaire et simple à mettre à jour.
-Exemple d'utilisation de doxygen:
+Pour que le code d'une application soit compris par un large public, sans devoir expliquer chaque fonction du code en détail, on emploie une méthode de normage global. Comme par exemple, le renommage des variables et des fonctions selon leur usage, ce qui permet une compréhension plus aisée du code. D'autre part, Doxygen permet de faire une documentation succincte, il suffit d'écrire un commentaire pour chaque fonction, décrivant son utilisation et fonctionnement. Doxygen permet d'avoir une documentation élémentaire et simple à mettre à jour.
+\paragraph{Exemple}
+Voici une utilisation de Doxygen, nous avons commenté notre code de la façon suivante:
 \begin{scriptsize}
 \begin{lstlisting}
 /**
 * \file  board.c
 * \brief Gestion de la grille de jeu ainsi que des scores 
 */
-
 /**
  * \brief      Cree une table de jeu
  * \details    initialisation de la grille de jeu ainsi que des scores
@@ -61,33 +63,33 @@ Board board_new(int width,int height,int highScores){
   b.height = height;
   b.highScores = highScores;
   for(i=0; i<height; i++)
-    {
+  {
       b.tab[i] = (char*)malloc(width*sizeof(char));
       for(j=0; j<width; j++)
-  {
-    b.tab[i][j]= VIDE;
+      {
+        b.tab[i][j]= VIDE;
+      }
   }
-    }
   b.last = malloc(width*height*sizeof(char));
   b.n_last = 0;
   b.undoRedoIndex = 0;
   return b;
 }
-
 \end{lstlisting}
 \end{scriptsize}
+Après avoir généré la documentation html, on obtient:
 \begin{center}
-\includegraphics[width=13cm]{board.png}
+\includegraphics[width=12cm]{board.png}
 \end{center}
 
 \chapter{Qualité des tests}
-On ne peut pas parler de qualité du logiciel sans parler des tests. Bien que ne prouvant pas l'absence de bug dans un code, les tests exécutés sur un programme sont de bons indicateurs sur sa qualité. Il est nécessaire de ``penser tests'' tôt dans la création d'un logiciel, car les tests sont écrits au fur et à mesure de la conception et sont destinés à être exécutés plusieurs fois, ceci afin de vérifier que les modifications et ajouts dans le code permettent toujours de valider les tests précédents. Et ceci est d'autant plus vrai lors d'un projet en équipe où les modifications des uns peuvent affecter les modifications des autres. Nous allons dans cette partie présenter deux méthodes permettant d'assurer une certaine rigueur dans les tests: l'une au sujet des tests unitaires et la seconde concernant l'analyse de couverture.
+On ne peut pas parler de qualité du logiciel sans parler des tests. Bien que ne prouvant pas l'absence de bug dans un code, les tests exécutés sur un programme sont de bons indicateurs sur sa qualité. Il est nécessaire de ``penser tests'' tôt dans la création d'un logiciel, car les tests sont écrits au fur et à mesure de la conception et sont destinés à être exécutés plusieurs fois, ceci afin de vérifier que les modifications et ajouts dans le code permettent toujours de valider les tests précédents. Et ceci est d'autant plus vrai lors d'un projet en équipe où les modifications des uns peuvent affecter les modifications des autres. Nous allons dans cette partie présenter deux méthodes permettant d'assurer une certaine rigueur dans les tests : l'une au sujet des tests unitaires et la seconde concernant l'analyse de couverture.
 \section{Les tests unitaires}
-Les tests unitaires sont des tests s'appliquant à une partie d'un programme et permettant de vérifier le programme par bloc. Un bloc de programme est en faite une fonction, et l'idée est d'écrire un test qui appelle une certaine fonction avec certains paramètres (judicieusement choisis si possible, c'est à dire couvrant le plus de branches possibles) et de vérifier que le résultat renvoyé par la fonction est bien le résultat attendu. Il est possible d'écrire ces tests en suivant un processus de développement dirigé par les tests, qui consiste à écrire les tests avant d'écrire la fonction correspondante. Mais on peut également les écrire si on dispose déjà de la fonction à tester en utilisant sa spécification (qui devrait être facilement accessible si le code a été documenté avec un outil adéquat), ce qui arrive si l'on est amener à retoucher un code existant.
+Les tests unitaires sont des tests s'appliquant à une partie d'un programme et permettant de vérifier le programme par bloc. Un bloc de programme est en fait une fonction, et l'idée est d'écrire un test qui appelle une certaine fonction avec certains paramètres (judicieusement choisis si possible, c'est-à-dire couvrant le plus de branches possibles) et de vérifier que le résultat renvoyé par la fonction est bien le résultat attendu. Il est possible d'écrire ces tests en suivant un processus de développement dirigé par les tests, qui consiste à écrire les tests avant d'écrire la fonction correspondante. Mais on peut également les écrire si on dispose déjà de la fonction à tester en utilisant sa spécification (qui devrait être facilement accessible si le code a été documenté avec un outil adéquat), ce qui arrive si l'on est amené à retoucher un code existant.
 
-TODO: Nécessiter de prendre en compte/modifier des fonctions pour permettre le test unitaire (valeur retour etc...) + decoupage code en fonction
+TODO : Nécessiter de prendre en compte/modifier des fonctions pour permettre le test unitaire (valeur retour, etc.) + découpage code en fonction.
 \paragraph{Exemple}
-Illustrons ce principe de tests unitaire à l'aide d'un exemple tiré d'un programme de puissance 4 (en langage C). Nous souhaitons écrire un test pour la fonction suivante:
+Illustrons ce principe de tests unitaires à l'aide d'un exemple tiré d'un programme de puissance 4 (en langage C). Nous souhaitons écrire un test pour la fonction suivante :
 
 \begin{scriptsize}
 \begin{lstlisting}
@@ -108,7 +110,7 @@ int checkfull(Board board);
 \end{lstlisting}
 \end{scriptsize}
 
-Il existe de nombreux frameworks permettant l'automatisation des tests unitaires, dans cet exemple, on utilise CuTest. Il peut être intéressant de remarquer (en gras) l'assignation des variable actual (valeur renvoyé par la fonction testée), de  expected (valeur attendue) et leur comparaison (qui fonctionne un peu comme une assertion).
+Il existe de nombreux frameworks permettant l'automatisation des tests unitaires, dans cet exemple, on utilise CuTest. Il peut être intéressant de remarquer (en gras) l'assignation des "variable actual" (valeur renvoyée par la fonction testée), de "expected" (valeur attendue) et leur comparaison (qui fonctionne un peu comme une assertion).
 \begin{scriptsize}
 \begin{lstlisting}
 
@@ -131,7 +133,7 @@ void Test_checkfull(CuTest *tc){
 \end{lstlisting}
 \end{scriptsize}
 
-Les tests écrits de cet façon pourrons ensuite tous être exécuter en même temps et des informations sur les échecs des tests seront disponibles:
+Les tests écrits de cette façon pourront ensuite tous être exécutés en même temps et des informations sur les échecs des tests seront disponibles :
 
 \begin{scriptsize}
 \begin{lstlisting}
@@ -153,29 +155,29 @@ OK (17 tests)
 \end{lstlisting}
 \end{scriptsize}
 
-Comme les tests sont ensuite facile à relancer, il est important de les réexécuter à chaque changement important dans le code afin d'éviter la régression.
+Comme les tests sont ensuite faciles à relancer, il est important de les réexécuter à chaque changement important dans le code afin d'éviter la régression.
 
 \section{Couverture}
-La couverture est un indicateur permettant de savoir quelles parties du code ont été couvertes par les tests. Utiliser la couverture seule n'est pas forcément intéressant, puisqu'elle n'indique pas si les tests ont été validés ou non. En revanche, en combinaison des tests unitaire vu précédemment, on a un indicateur de la qualité des tests très puissant puisqu'on a l'information du pourcentage du code tester et du nombre de tests validés.
+La couverture est un indicateur permettant de savoir quelles parties du code ont été couvertes par les tests. Utiliser la couverture seule n'est pas forcément intéressant, puisqu'elle n'indique pas si les tests ont été validés ou non. En revanche, en combinaison des tests unitaires vu précédemment, on a un indicateur de la qualité des tests très puissant puisqu'on a l'information du pourcentage du code testé et du nombre de tests validés.
 \paragraph{Exemple}
-Nous avons utilisé l'outil gcov afin d'observer la couverture de notre puissance 4. Comme ce dernier ne donne qu'un résultat textuel de la couverture, nous avons complété son utlisation avec l'outil lcov, qui utilise ce que gcov a produit mais rajoute une interface html afin que la couverture soit plus facile à lire. On peut ainsi observer le pourcentage de lignes/fonctions visitées par les tests:
+Nous avons utilisé l'outil gcov afin d'observer la couverture de notre puissance 4. Comme ce dernier ne donne qu'un résultat textuel de la couverture, nous avons complété son utlisation avec l'outil lcov, qui utilise ce que gcov a produit mais rajoute une interface html afin que la couverture soit plus facile à lire. On peut ainsi observer le pourcentage de lignes/fonctions visitées par les tests :
 
 \begin{center}
   \includegraphics[width=13cm]{couverture1.png}
 \end{center}
 
-En plus des pourcentage de couverture, on peut également directement voir sur le code ce qui a été couvert(en bleu) et ce qui ne l'a pas été(en rouge). Cela est pratique lorsqu'on écrit des tests en essayant de passer par le plus de branches possibles (conditions,boucles,...) du programme.
+En plus des pourcentages de couverture, on peut également directement voir sur le code ce qui a été couvert (en bleu) et ce qui ne l'a pas été (en rouge). Cela est pratique lorsqu'on écrit des tests en essayant de passer par le plus de branches possibles (conditions, boucles, ...) du programme.
 
 \begin{center}
   \includegraphics[width=13cm]{couverture2.png}
 \end{center}
 
 \chapter{Détection de défauts et erreurs}
-Bien que les tests permettent de trouver les bugs les plus gros dans un programme, on ne peut souvent pas tester tous les états possible, et il peut rester des bug arrivant dans certains cas particuliers, ou bien des défauts non directement visible. On peut alors se tourner vers des outils spécialisé dans la détection d'erreurs. Nous allons ainsi voir deux types d'outils: un debogueur et un outils d'exécution symbolique.
-\section{Debogueur}
-Un debogueur permet de contrôler l'exécution d'un programme et ajoute des informations supplémentaire à ce dernier. On peut ainsi détecter des erreurs comme des accès mémoires non autorisé, ou bien même des fuites mémoire.
+Bien que les tests permettent de trouver les bugs les plus gros dans un programme, on ne peut souvent pas tester tous les états possibles, et il peut rester des bugs arrivant dans certains cas particuliers, ou bien des défauts non directement visibles. On peut alors se tourner vers des outils spécialisés dans la détection d'erreurs. Nous allons ainsi voir deux types d'outils : un débogueur et un outil d'exécution symbolique.
+\section{Débogueur}
+Un débogueur permet de contrôler l'exécution d'un programme et ajoute des informations supplémentaires à ce dernier. On peut ainsi détecter des erreurs comme des accès mémoire non autorisés, ou bien même des fuites mémoire.
 \paragraph{Exemple}
-Le puissance 4 que nous sommes en train de modifier déclenche des erreurs de segmentation dans certains cas. Nous allons donc utiliser un outil de débogage simple d'utilisation : valgrind. Il suffit d'exécuter notre programme avec valgrind pour que ce dernier nous détaille la provenance de l'erreur:
+Le puissance 4 que nous sommes en train de modifier déclenche des erreurs de segmentation dans certains cas. Nous allons donc utiliser un outil de débogage simple d'utilisation : valgrind. Il suffit d'exécuter notre programme avec valgrind pour que ce dernier nous détaille la provenance de l'erreur :
 
 \begin{scriptsize}
   \begin{lstlisting}
@@ -189,7 +191,7 @@ Le puissance 4 que nous sommes en train de modifier déclenche des erreurs de se
   \end{lstlisting}
 \end{scriptsize}
 
-On a ainsi accès à la ligne, à la suite d'appel des fonctions et à la taille de l'accès mémoire ayant déclencher l'erreur, il ne reste qu'à la corriger en ajoutant des conditions (voire des assertions) anticipant les accès non autorisés. En vert les corrections ajoutées:
+On a ainsi accès à la ligne, à la suite d'appel des fonctions et à la taille de l'accès mémoire ayant déclenché l'erreur, il ne reste qu'à la corriger en ajoutant des conditions (voire des assertions) anticipant les accès non autorisés. En vert les corrections ajoutées :
 
 \begin{scriptsize}
   \begin{lstlisting}
@@ -224,12 +226,12 @@ A noter que Valgrind nous donne également des informations sur les fuites mémo
 \end{scriptsize}
 
 \section{Exécution symbolique}
-Cette méthode pour trouver des bugs dans un programme consiste à explorer tous les chemins d'exécution possible de ce programme. Bien que cette méthode peut donner de bon résultats, elle a aussi l'inconvéniant de ne s'appliquer qu'à de petit code (ou petite portion de code) ceci étant dû au nombre de chemins explorés selon la taille du code. 
+Cette méthode pour trouver des bugs dans un programme consiste à explorer tous les chemins d'exécution possibles de ce programme. Bien que cette méthode donne de bons résultats, elle a l'inconvéniant de ne s'appliquer qu'à de petits codes (ou petites portions de codes) ceci étant dû au nombre de chemins explorés selon la taille du code. 
 
 \paragraph{Exemple}
-Nous avons utilisé Klee sur notre programme. Klee nécessite d'instrumenter son code afin de désigner quelles variables peuvent voir leur valeur changée. Dans notre cas, il s'agit des entrées de l'utilisateur.
+Nous avons utilisé Klee sur notre programme. Klee nécessite d'instrumenter son code afin de désigner quelles variables peuvent voir leur valeur changer. Dans notre cas, il s'agit des entrées de l'utilisateur.
 
-On lançant Klee et en attendant quelque minutes, on a pu débusquer une erreur d'accès mémoire via le message suivant:
+En lançant Klee et en attendant quelques minutes, on a pu débusquer une erreur d'accès mémoire via le message suivant :
 \begin{scriptsize}
   \begin{lstlisting}
 KLEE: ERROR: appli.c:641: memory error: out of bound pointer
@@ -237,6 +239,60 @@ KLEE: ERROR: appli.c:641: memory error: out of bound pointer
 \end{scriptsize}
 
 Même une fois l'erreur trouvée, Klee continue à tourner et cherche d'autres problèmes.
+
+\chapter{Profiling}
+Dans le but d'optimiser son code, il est possible d'utiliser le profilage de code qui donne des informations sur l'exécution du programme.  Un profiling basique consiste à donner le temps passé dans chaque fonction du programme. L'outil gprof permet de faire cela. C'est très intéressant lorsqu'on a un programme qui tourne lentement et qu'on souhaite savoir quelle partie du code optimiser. Si on utilise le profiling sur un programme qui de base s'exécute trop vite, on ne pourra rien en tirer et il faudra donc adapter le programme ou les entrées afin de simuler une exécution longue et ainsi obtenir un profiling exploitable.
+\paragraph{Exemple}
+Voici un profiling réalisé avec gprof sur le puissance 4.
+\begin{scriptsize}
+\begin{lstlisting}
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+%   cumulative   self              self     total           
+time   seconds   seconds    calls  us/call  us/call  name    
+56.46      9.76     9.76     9907   985.34   985.34  board_print
+11.97     11.83     2.07    10000   207.04   207.04  diagonal
+11.16     13.76     1.93    10000   193.03   193.03  horizontalScore
+10.47     15.57     1.81    10000   181.03   181.03  verticalScore
+ 9.83     17.27     1.70    10000   170.03   170.03  diagonal1
+ 0.06     17.28     0.01    14906     0.67     0.67  checkfull
+ 0.06     17.29     0.01                             main
+ 0.00     17.29     0.00    24906     0.00     0.00  board_currentPlayerSymbole
+ 0.00     17.29     0.00    10000     0.00     0.00  board_put
+ 0.00     17.29     0.00     9906     0.00     0.00  board_colIsFull
+ 0.00     17.29     0.00     9906     0.00     0.00  checknum
+                         ...
+\end{lstlisting}
+\end{scriptsize}
+
+On trouve tout à droite les noms des fonction du programme étudié. On remarque que les fonction board\_print,diagonal,horizontalScore,verticalScore et diagonal1 ont des pourcentages de temps d'exécution plus grand que les autres. On peut alors se demander s'il est possible des les améliorer. Les fonction diagonal,horizontalScore,verticalScore et diagonal1 sont toutes des fonctions fréquemment appelées qui parcours un tableau de taille NxM afin de calculer un score. Il se trouve qu'on peut facilement améliorer leurs performances en stockant en mémoire le calcul du score précédent. C'est d'ailleurs un règle assez générale: on fait moins de calculs mais on utilise plus de mémoire. En modifiant ainsi les fonctions, on obtient le profiling suivant:
+
+\begin{scriptsize}
+\begin{lstlisting}
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 99.37      6.10     6.10     9907   615.83   615.83  board_print
+  0.16      6.11     0.01    40000     0.25     0.25  board_lastPlayRow
+  0.16      6.12     0.01    14906     0.67     0.67  checkfull
+  0.16      6.13     0.01    10000     1.00     1.25  diagonal1
+  0.16      6.14     0.01    10000     1.00     1.25  horizontalScore
+  0.00      6.14     0.00    80000     0.00     0.00  board_lastPlayCol
+  0.00      6.14     0.00    24906     0.00     0.00  board_currentPlayerSymbole
+  0.00      6.14     0.00    10000     0.00     0.00  board_put
+  0.00      6.14     0.00    10000     0.00     0.25  diagonal
+  0.00      6.14     0.00    10000     0.00     0.25  verticalScore
+  0.00      6.14     0.00     9906     0.00     0.00  board_colIsFull
+  0.00      6.14     0.00     9906     0.00     0.00  checknum
+                         ...
+\end{lstlisting}
+\end{scriptsize}
+
+En ignorant la fonction board\_print qui est une fonction d'affichage et qui met donc un certain temps à s'exécuter (on peut le voir dans le us/call), on voit qu'on a gagné en pourcentage de temps passé dans les fonctions concernées. Gprof donne aussi d'autre information comme le nombre d'appel des fonction mais aussi le call graph, qui donne le temps passé dans les fonctions et dans ses fils.
+
 \chapter{Analyse de performance}
 Au dela de l'aspect programmation, qui se doit d'être affiné le plus possible afin que le programme s’exécute dans un temps minimal, nous avons optimisé le programme afin de minimiser les temps d'accès aux caches du processeur.
 En effet, une erreur de prédiction de saut ou une donnée non présente dans un cache lors de l’accès fait perdre un temps considérable dans l'exécution du programme, car il faut dans un cas detecter l'erreur de branchement et la corriger, et dans l'autre cas aller chercher la donnée dans la mémoire.
@@ -312,8 +368,10 @@ Après les modifications de notre programme, nous avons obtenu les valeurs suiva
 ==5578== Mispredicts:      24,986  (   22,529 cond +   2,447 ind)
 ==5578== Mispred rate:        2.3% (      2.5%     +     3.4%   )
 \end{lstlisting}
+\end{scriptsize}
+
 \begin{center}
-\textbf{\textit{Figure 2 : Exécution de Cachegrind sur le programme. modifié}}
+\textbf{\textit{Figure 2 : Exécution de Cachegrind sur le programme modifié.}}
 \end{center}
 
 Comme on peut le voir, le nombre de "cache miss" à grandement diminué vu que nous sommes passés de 0.33\% à 0.05\%. 
@@ -323,6 +381,43 @@ Il serait probablement possible d'améliorer encore ce score mais cela demandera
 Pour ce qui est des prédictions de branchements, elles ont très peu diminuées car les améliorations que nous avons faites sont peu nombreuses, le programme ne ce porte pas vraiment à ce genre d'optimisation.
 \newline
 Il est à noter qu'il est normal d'avoir quelques "branch miss" sur un programme de cette taille.
-\end{scriptsize}
+
+\chapter{Analyse de vulnérabilité }
+\section{Outil pour l'analyse de vulnérabilité}
+Nous avons déjà vu précédemment l'outil KLEE, qui permet de détecter des erreurs automatiquement dans un programme en simulant des traces d’exécution de ce dernier, en essayant d'avoir la plus large couverture de code possible. 
+\newline 
+Dans ce même but, nous avons utilisé l'outil AFL qui va lui aussi détecter des erreurs via une analyse statique. AFL va, contrairement à KLEE qui modifie directement les variables dans le code, modifier un fichier d'entrées donné par l'utilisateur.
+\newline
+Ce fichier, qui doit couvrir une partie des entrées possible du fichier, va ensuite être transformé par AFL pour trouver des plantages.
+\newline
+La modification est dite "génétique" dans le sens où, même si les modifications sont aléatoires, une modification utile (qui provoque un plantage) sera repérée et alors les transformations suivante du fichier iront dans le même sens, pour provoquer d'autres potentiels plantages.
+\newline
+Chaque plantage est alors une potentielle faille de sécurité à corriger.
+Les bugs trouvés sont donc en grande partie des entrées incorrectes. 
+\newline
+Les fichiers d'entrées provoquant un plantage sont alors sauvegardés et transmis à l'utilisateur qui peut alors corriger les bugs.
+
+\section{Exemple d'analyse de vulnérabilité}
+Dans notre puissance 4, l'une des choses lue par le programme est le fichier XML qui donne la taille de la grille.
+Bien que ce soit potentiellement intéressant de trouver des bugs dans la lecture de ce fichier, nous avons préféré nous focaliser sur le fuzzing des entrées des joueurs du programme.
+Nous avons donc fait le nécessaire pour que afl prenne ce fichier en paramètre.
+Nous allons maintenant voir un exemple de l'exécution d'AFL sur le projet de base.
+Nous pouvons trouver un grand nombre d'informations, et principalement le nombre de crash, crash unique, les chemins empruntés et les timeout.
+
+\begin{center}
+  \includegraphics[width=13cm]{captureafl1.png}
+\textbf{\textit{Figure 1 : Exécution d'AFL sur le programme de base.}}
+\end{center}
+
+Nous pouvons voir un très grand nombre de crashs uniques, voici maintenant l'éxécution d'AFL sur le projet modifié : 
+
+\begin{center}
+  \includegraphics[width=13cm]{captureafl2.png}
+\textbf{\textit{Figure 2 : Exécution d'AFL sur le programme modifié.}}
+\end{center}
+
+Comme nous pouvons le constater, les crashs ont disparus grâce aux modifications que les différents outils nous ont amené à faire, nous avons résolu certains bug avec AFL mais comme malheureusement il ne peut détecter que les crashs, son utilisation doit se faire en complementarité avec d'autres outils comme Valgrind.
+
+\chapter{Conclusion}
 
 \end{document}
