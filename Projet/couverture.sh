@@ -6,7 +6,7 @@
 EXEC=AllTests
 
 #Chemin de lcov
-LCOVPATH=~/Documents/s6/CA/lcov-1.13/bin
+LCOVPATH=~vandendt/semestre6/lcov-1.13/bin
 
 gcov -b -c $EXEC
 $LCOVPATH/lcov --base-directory . --directory . -c -o rap.info 
