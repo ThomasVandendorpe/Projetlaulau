@@ -1,6 +1,6 @@
 EXEC=appli
 
-#####
+
 #Juste pour utiliser l'autocomplétion via tabulation:
 appli:
 AllTests:
