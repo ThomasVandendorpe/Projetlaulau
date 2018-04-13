@@ -414,9 +414,41 @@ Nous pouvons voir un très grand nombre de crashs uniques, voici maintenant l'é
   \includegraphics[width=13cm]{captureafl2.png}
 \textbf{\textit{Figure 2 : Exécution d'AFL sur le programme modifié.}}
 \end{center}
-
-Comme nous pouvons le constater, les crashs ont disparus grâce aux modifications que les différents outils nous ont amené à faire, nous avons résolu certains bug avec AFL mais comme malheureusement il ne peut détecter que les crashs, son utilisation doit se faire en complementarité avec d'autres outils comme Valgrind.
+\newpage
+Comme nous pouvons le constater, les crashs ont disparus grâce aux modifications que les différents outils nous ont amené à faire et tout les aspects importants ont été améliorés. Il est à noter que la plupart des "time-outs" proviennent de fonctions scanf qu'AFL considère comme étant trop lente à s'exécuter. Il est difficile de trouver une solution à ce problème, le moyen le plus simple étant de donner à AFL un temps de time-out plus conséquent. 
+\newline
+Nous avons résolu certains bug avec AFL mais comme malheureusement il ne peut détecter que les crashs, son utilisation doit se faire en complémentarité avec d'autres outils comme Valgrind ou Klee afin d'avoir une analyse plus détaillée de l'exécution du programme.
 
 \chapter{Conclusion}
+Nous avons vu dans ce projet différents outils ayant tous des spécificités que nous avons pu mettre à profit pour améliorer autant que possible le code qui nous a été fourni.
+\newline
+Notre code est désormais à la fois plus clair à lire et à comprendre, mais aussi plus optimisé grâce à toutes les modifications que nous avons faite tout au long des séances.
+\newline
+Nous avons poussé au maximum l'utilisation des tests unitaires en testant toutes les fonctions indépendamment, afin de minimiser autant que possible les risques de bugs.
+\newline 
+Nous avons aussi passé une fine analyse de couverture, qui à fini par couvrir près de 95\% du code.
+\newline 
+Et enfin, grâce au multiples outils mis à notre disposition, comme Klee, AFL, Valgrind ou encore Cachegrind, nous avons corrigé un grand nombre de bugs qui rendaient initialement le programme inutilisable.
+\newline
+Certains de ces outils ne se prêtaient pas vraiment à l'analyse d'un programme si basique, c'est pourquoi leur puissance n'a pas été vraiment remarquée, notamment AFL, qui possède un très grand nombre d'options et d'applications diverses qui n'ont pas pu être appliquées ici, en raison d'un nombre d'entrées possible du programme trop limité. 
+\newline
+Tout les outils que nous avons utilisés nous ont donnés des résultats cohérents et qui nous ont permis de mieux comprendre le programme, une chose que nous aurions pu faire mais que nous n'avons pas fait par manque de temps est de faire fonctionner AFL à la fois sur les entrées du joueur et sur le fichier XML, afin de détecter plus de potentiels bugs.
+Nous aurions aussi pu continuer d'améliorer notre Makefile, par exemple en faisant en sorte qu'il gère mieux les dépendances (et notamment les .h), ou alors qu'on puisse décider directement dans la ligne de commande quel outil exécuter, au lieu de modifier le contenu des variables du Makefile.
+\newline  
+Au final, le programme que nous avons est bien optimisé et nous avons appris l'existence et l'utilisation d'outils qui nous serviront probablement dans le futur, pour le débogage de projets plus importants qui ne pourront pas être purement et simplement ré-écrits.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 \end{document}
