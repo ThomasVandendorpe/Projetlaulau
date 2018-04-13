@@ -24,12 +24,57 @@ Ce dossier rassemble les travaux effectués lors du cours de ``Méthodes et Outi
 
 \chapter{Modularité, maintenabilité, réutilisabilité}
 \section{Structuration}
-L'élément le plus important pour gagner du temps dans notre travail, est l'organisation. La première chose que l'on commence à faire, est de structurer le code en parties pour s'y retrouver le mieux possible. Cela implique de rassembler les fonctions par thèmes dans différents fichiers. Lors de la séparation en plusieurs fichier, les variables globales initiales sont devenues obsolètes, laissant place à un type struct plus facile d'utilisation entre les fichiers. L'application est désormais décomposée en plusieurs modules ce qui permet de faire des tests unitaire indépendamment des autres, mais aussi de trouver et corriger des erreurs plus facilement lors de la compilation. Pour que l'environnement de travaille soit propre et facile d'acces, on regroupe les fichiers sources dans un même dossier, de même pour les includes, les tests et documents de sorte à ne pas chercher nos fichiers.
+L'élément le plus important pour gagner du temps dans notre travail, est l'organisation. La première chose que l'on commence à faire, est de structurer le code en parties pour s'y retrouver le mieux possible. Cela implique de rassembler les fonctions par thèmes dans différents fichiers. Lors de la séparation en plusieurs fichier, les variables globales initiales sont devenues obsolètes, laissant place à un type struct plus facile d'utilisation entre les fichiers. L'application est désormais décomposée en plusieurs modules ce qui permet de faire des tests unitaire indépendamment des autres, mais aussi de trouver et corriger des erreurs plus facilement lors de la compilation. Dans le cas de notre puissance 4, nous avons séparé l'application en 5 fichiers :
+\begin{itemize}
+\item appli.c : contient la fonction main
+\item board.c/board.h : les fonctions manipulant la structure board(le plateau de puissance 4)
+\item action.c/action.h : les actions(les règles) du jeu
+\item ia.c/ia.h : les IAs
+\item score.c/score.h: les informations de scores
+\end{itemize} Pour que l'environnement de travaille soit propre et facile d'acces, on regroupe les fichiers sources dans un même dossier, de même pour les includes, les tests et documents de sorte à ne pas chercher nos fichiers.
 
 
 \section{Documentation}
 Pour que le code d'une application soit compris par un large publique, sans devoir expliquer chaque fonctions du code, on emploie des moyens à longue durée. Comme par exemple le renommage des variables et des fonctions selon leur usage, ce qui permet une compréhension plus aisée du code. D'autre part, Doxygen permet de faire une documentation succinct, il suffit d'écrire un commentaire pour chaque fonctions, décrivant son utilisation et fonctionnement. Doxygen permet d'avoir une documentation élémentaire et simple à mettre à jour.
+Exemple d'utilisation de doxygen:
+\begin{scriptsize}
+\begin{lstlisting}
+/**
+* \file  board.c
+* \brief Gestion de la grille de jeu ainsi que des scores 
+*/
 
+/**
+ * \brief      Cree une table de jeu
+ * \details    initialisation de la grille de jeu ainsi que des scores
+ * \param      width         largeur de la grille
+ * \param      heigh         longueur de la grille
+ * \param      highscores    table des highscores
+ * \return     une grille de jeu selon les paramètres donnés
+ */
+Board board_new(int width,int height,int highScores){
+  Board b;
+  int i,j;
+  b.tab = (char **)malloc(height*sizeof(char *));
+  b.width = width;
+  b.height = height;
+  b.highScores = highScores;
+  for(i=0; i<height; i++)
+    {
+      b.tab[i] = (char*)malloc(width*sizeof(char));
+      for(j=0; j<width; j++)
+  {
+    b.tab[i][j]= VIDE;
+  }
+    }
+  b.last = malloc(width*height*sizeof(char));
+  b.n_last = 0;
+  b.undoRedoIndex = 0;
+  return b;
+}
+
+\end{lstlisting}
+\end{scriptsize}
 
 \chapter{Qualité des tests}
 On ne peut pas parler de qualité du logiciel sans parler des tests. Bien que ne prouvant pas l'absence de bug dans un code, les tests exécutés sur un programme sont de bons indicateurs sur sa qualité. Il est nécessaire de ``penser tests'' tôt dans la création d'un logiciel, car les tests sont écrits au fur et à mesure de la conception et sont destinés à être exécutés plusieurs fois, ceci afin de vérifier que les modifications et ajouts dans le code permettent toujours de valider les tests précédents. Et ceci est d'autant plus vrai lors d'un projet en équipe où les modifications des uns peuvent affecter les modifications des autres. Nous allons dans cette partie présenter deux méthodes permettant d'assurer une certaine rigueur dans les tests: l'une au sujet des tests unitaires et la seconde concernant l'analyse de couverture.
