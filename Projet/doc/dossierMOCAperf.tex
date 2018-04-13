@@ -191,7 +191,7 @@ Après les modifications de notre programme, nous avons obtenu les valeurs suiva
 ==5578== Mispred rate:        2.3% (      2.5%     +     3.4%   )
 \end{lstlisting}
 \begin{center}
-\textbf{\textit{Figure 2 : Exécution de Cachegrind sur le programme. modifié}}
+\textbf{\textit{Figure 2 : Exécution de Cachegrind sur le programme modifié.}}
 \end{center}
 
 Comme on peut le voir, le nombre de "cache miss" à grandement diminué vu que nous sommes passés de 0.33\% à 0.05\%. 
@@ -203,18 +203,42 @@ Pour ce qui est des prédictions de branchements, elles ont très peu diminuées
 Il est à noter qu'il est normal d'avoir quelques "branch miss" sur un programme de cette taille.
 \end{scriptsize}
 
+\newpage
+\chapter{Analyse de vulnérabilité }
+\section{Outil pour l'analyse de vulnérabilité}
+Nous avons déjà vu précédemment l'outil KLEE, qui permet de détecter des erreurs automatiquement dans un programme en simulant des traces d’exécution de ce dernier, en essayant d'avoir la plus large couverture de code possible. 
+\newline 
+Dans ce même but, nous avons utilisé l'outil AFL qui va lui aussi détecter des erreurs via une analyse statique. AFL va, contrairement à KLEE qui modifie directement les variables dans le code, modifier un fichier d'entrées donné par l'utilisateur.
+\newline
+Ce fichier, qui doit couvrir une partie des entrées possible du fichier, va ensuite être transformé par AFL pour trouver des plantages.
+\newline
+La modification est dite "génétique" dans le sens où, même si les modifications sont aléatoires, une modification utile (qui provoque un plantage) sera repérée et alors les transformations suivante du fichier iront dans le même sens, pour provoquer d'autres potentiels plantages.
+\newline
+Chaque plantage est alors une potentielle faille de sécurité à corriger.
+Les bugs trouvés sont donc en grande partie des entrées incorrectes. 
+\newline
+Les fichiers d'entrées provoquant un plantage sont alors sauvegardés et transmis à l'utilisateur qui peut alors corriger les bugs.
 
+\section{Exemple d'analyse de vulnérabilité}
+Dans notre puissance 4, l'une des choses lue par le programme est le fichier XML qui donne la taille de la grille.
+Bien que ce soit potentiellement intéressant de trouver des bugs dans la lecture de ce fichier, nous avons préféré nous focaliser sur le fuzzing des entrées des joueurs du programme.
+Nous avons donc fait le nécessaire pour que afl prenne ce fichier en paramètre.
+Nous allons maintenant voir un exemple de l'exécution d'AFL sur le projet de base.
+Nous pouvons trouver un grand nombre d'informations, et principalement le nombre de crash, crash unique, les chemins empruntés et les timeout.
 
+\begin{center}
+  %\includegraphics[width=13cm]{captureafl1.png}
+\textbf{\textit{Figure 1 : Exécution d'AFL sur le programme de base.}}
+\end{center}
 
+Nous pouvons voir un très grand nombre de crashs uniques, voici maintenant l'éxécution d'AFL sur le projet modifié : 
 
+\begin{center}
+  %\includegraphics[width=13cm]{captureafl2.png}
+\textbf{\textit{Figure 2 : Exécution d'AFL sur le programme modifié.}}
+\end{center}
 
-
-
-
-
-
-
-
+Comme nous pouvons le constater, les crashs ont disparus grâce aux modifications que les différents outils nous ont amené à faire, nous avons résolu certains bug avec AFL mais comme malheureusement il ne peut détecter que les crashs, son utilisation doit se faire en complementarité avec d'autres outils comme Valgrind.
 
 
 
